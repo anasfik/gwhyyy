@@ -1,0 +1,12 @@
+# SSL certificates go here.
+# Use Let's Encrypt (Certbot) to generate them:
+#
+#   sudo apt install certbot
+#   sudo certbot certonly --standalone -d gwhyyy.com -d www.gwhyyy.com
+#
+# Then copy or symlink:
+#   cp /etc/letsencrypt/live/gwhyyy.com/fullchain.pem ./nginx/ssl/
+#   cp /etc/letsencrypt/live/gwhyyy.com/privkey.pem   ./nginx/ssl/
+#
+# Then uncomment the SSL lines in nginx/nginx.conf and restart:
+#   docker compose restart nginx

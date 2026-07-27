@@ -1,0 +1,234 @@
+{
+  "seo": {
+    "title": "Mohamed Anas Fikhi — Flutter & AI Engineer",
+    "titleTemplate": "%s | GWHYYY",
+    "description": "Hire Mohamed Anas Fikhi (GWHYYY) — Flutter developer and AI systems engineer based in Casablanca, Morocco. Available for contract work. Building production LLM pipelines, RAG architectures, Flutter mobile apps, and developer SDKs. Remote-friendly.",
+    "keywords": [
+      "Flutter developer for hire",
+      "hire Flutter developer",
+      "Flutter freelancer",
+      "AI engineer freelance",
+      "LLM developer",
+      "RAG architecture developer",
+      "Flutter app development",
+      "Dart developer",
+      "mobile app developer Morocco",
+      "AI integration developer",
+      "SDK engineer",
+      "remote Flutter developer",
+      "Flutter developer Casablanca",
+      "AI systems engineer",
+      "custom AI development",
+      "Flutter consultant",
+      "Mohamed Anas Fikhi",
+      "GWHYYY",
+      "gwhyyy.com"
+    ],
+    "ogImage": "/og-image.png",
+    "url": "https://gwhyyy.com",
+    "twitterHandle": "@gwhyyy"
+  },
+  "personal": {
+    "name": "Mohamed Anas Fikhi",
+    "handle": "GWHYYY",
+    "tagline": "I build production AI systems and high-performance Flutter products.",
+    "subTagline": "Bridging the gap between cutting-edge research and scalable production infrastructure. Specialized in architecting robust digital foundations for data-intensive applications.",
+    "email": "work@gwhyyy.com",
+    "phone": "+212760386573",
+    "location": "Casablanca, Morocco",
+    "coordinates": "33.5731° N, 7.5898° W"
+  },
+  "availability": {
+    "available": true,
+    "label": "Available for Projects"
+  },
+  "links": {
+    "github": "https://github.com/anasfik",
+    "linkedin": "https://linkedin.com/in/mohamed-anas-fikhi",
+    "calendly": "https://calendly.com/ffikhi-aanas/30min",
+    "email": "mailto:work@gwhyyy.com"
+  },
+  "projects": [
+    {
+      "id": "dart-openai",
+      "title": "Dart OpenAI",
+      "category": "Open Source / SDK",
+      "description": "A fully-featured client library for the OpenAI API, optimized for Flutter and Dart performance with type-safe implementations. Used by thousands of developers worldwide.",
+      "tags": [
+        "Dart",
+        "Flutter",
+        "API Design",
+        "Open Source"
+      ],
+      "url": "https://github.com/anasfik/openai",
+      "image": null,
+      "visible": true,
+      "order": 1
+    },
+    {
+      "id": "gathr",
+      "title": "Gathr",
+      "category": "Product Engineering",
+      "description": "Social infrastructure for the modern age. Built and shipped a production mobile application. Architected the cross-platform experience and core event-driven state management across Flutter + Nostr + Node.js.",
+      "tags": [
+        "Flutter",
+        "Nostr",
+        "Node.js",
+        "Firebase"
+      ],
+      "url": "https://gathr.gives",
+      "image": null,
+      "visible": true,
+      "order": 2
+    },
+    {
+      "id": "rollee-sdk",
+      "title": "Rollee Connect SDK",
+      "category": "SDK / Fintech",
+      "description": "Secure, high-integrity connectivity layer for employment data. Sole engineer on the full Flutter SDK enabling third-party integrations with a clean, developer-first API.",
+      "tags": [
+        "Flutter SDK",
+        "Dart",
+        "Security",
+        "Fintech"
+      ],
+      "url": "https://www.getrollee.com",
+      "image": null,
+      "visible": true,
+      "order": 3
+    },
+    {
+      "id": "nostr-mind",
+      "title": "NostrMind",
+      "category": "Experimental / AI",
+      "description": "Config-driven Nostr monitoring worker with AI classification and optional DM alerts. Integrating LLM reasoning into decentralized protocols.",
+      "tags": [
+        "Nostr",
+        "LLM",
+        "AI Agents",
+        "Dart"
+      ],
+      "url": "https://github.com/anasfik/NostrMind",
+      "image": null,
+      "visible": true,
+      "order": 4
+    },
+    {
+      "id": "public-apis",
+      "title": "Public APIs",
+      "category": "Mobile / Developer Tools",
+      "description": "Mobile app for browsing and discovering public APIs with filtering, search, and favorites — built for developers by a developer.",
+      "tags": [
+        "Flutter",
+        "Dart",
+        "Developer Tools"
+      ],
+      "url": "https://play.google.com/store/apps/details?id=com.gwhyyy.publicApis",
+      "image": null,
+      "visible": true,
+      "order": 5
+    },
+    {
+      "id": "dart-nostr",
+      "title": "Dart Nostr",
+      "category": "Open Source / Protocol",
+      "description": "Develop scalable Dart/Flutter Nostr clients quickly and easily. A production-grade library for the Nostr decentralized protocol.",
+      "tags": [
+        "Dart",
+        "Nostr",
+        "Open Source",
+        "Protocol"
+      ],
+      "url": "https://github.com/anasfik/nostr",
+      "image": null,
+      "visible": true,
+      "order": 6
+    }
+  ],
+  "experience": [
+    {
+      "id": "gathr-exp",
+      "company": "Gathr",
+      "role": "Software Engineer — Flutter Developer",
+      "url": "https://gathr.gives",
+      "period": "12/2023 – 09/2025",
+      "type": "Remote",
+      "impact": "Built & shipped a production-ready mobile application. Managed backend services and cloud infrastructure across the full stack.",
+      "stack": [
+        "Flutter",
+        "Nostr",
+        "Node.js",
+        "Linux",
+        "Git"
+      ]
+    },
+    {
+      "id": "rollee-exp",
+      "company": "Rollee",
+      "role": "Flutter SDK Engineer",
+      "url": "https://www.getrollee.com",
+      "period": "07/2023 – 08/2023",
+      "type": "Remote",
+      "impact": "Sole engineer who built the full Rollee Connect SDK enabling third-party integrations with a simple, developer-friendly API.",
+      "stack": [
+        "Flutter",
+        "Dart"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "product-engineering",
+      "icon": "devices",
+      "title": "Product Engineering",
+      "description": "Building high-performance, responsive applications with Flutter. Focusing on performance optimization, animations, and complex state management.",
+      "bullets": [
+        "+ Cross-platform (iOS / Android / Web)",
+        "+ Optimized Rendering Engines",
+        "+ Reactive Architectures"
+      ]
+    },
+    {
+      "id": "ai-systems",
+      "icon": "memory",
+      "title": "Custom AI Systems",
+      "description": "Developing proprietary LLM pipelines and RAG architectures tailored to specific business logic and private datasets.",
+      "bullets": [
+        "+ RAG Implementations",
+        "+ Prompt Engineering & Tuning",
+        "+ Vector DB Orchestration"
+      ]
+    },
+    {
+      "id": "sdk-tooling",
+      "icon": "code",
+      "title": "SDK & Tooling",
+      "description": "Creating developer-first libraries and infrastructure that abstract complexity into clean, type-safe, and documented interfaces.",
+      "bullets": [
+        "+ Library Architecture",
+        "+ CI/CD for Package Managers",
+        "+ API Specification & Design"
+      ]
+    }
+  ],
+  "process": [
+    {
+      "step": "01",
+      "title": "Discovery & Audit",
+      "description": "Analyzing existing infrastructure and defining technical constraints to ensure architectural alignment."
+    },
+    {
+      "step": "02",
+      "title": "Prototype & Validate",
+      "description": "Rapid iteration of core technical modules to de-risk high-complexity features and integration points."
+    },
+    {
+      "step": "03",
+      "title": "Scale & Polish",
+      "description": "Refining performance bottlenecks and finalizing the production-ready infrastructure for public deployment."
+    }
+  ],
+  "footer": {
+    "copyright": "© 2025 MOHAMED ANAS FIKHI. ALL RIGHTS RESERVED."
+  }
+}

@@ -1,0 +1,46 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build output (we copy selectively in Dockerfile)
+.next
+
+# Data (mounted as volume at runtime)
+data/
+
+# Environment files (injected at runtime)
+.env
+.env.local
+.env.*.local
+
+# Dev tools
+.git
+.gitignore
+.eslintrc*
+.prettierrc*
+
+# Stitch design source files
+../Stitch\ design/
+
+# Docker files (no circular inclusion)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Editor
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+__tests__
+*.test.ts
+*.spec.ts
+coverage/
+
+# README
+README.md
