@@ -15,20 +15,14 @@ export default function Hero() {
             {siteConfig.personal.subTagline}
           </p>
 
-          {/* Quick credential strip */}
+          {/* Credential strip — driven by config for easy updates */}
           <div className="flex flex-wrap gap-x-8 gap-y-3 mb-12 border-t border-outline-variant pt-8">
-            {[
-              { label: "Location", value: "Casablanca · Remote" },
-              { label: "Experience", value: "3+ Years Production" },
-              { label: "Open Source", value: "4 Public Libraries" },
-              { label: "Status", value: siteConfig.availability.label, highlight: true },
-            ].map(({ label, value, highlight }) => (
+            {siteConfig.metrics.map(({ label, value }) => (
               <div key={label} className="flex flex-col gap-1">
                 <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[10px] uppercase tracking-[0.15em] text-secondary">
                   {label}
                 </span>
-                <span className={`font-[family-name:var(--font-ibm-plex-sans)] text-[13px] font-medium ${highlight ? "text-green-600" : "text-on-surface"}`}>
-                  {highlight && <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 mr-2 mb-0.5" />}
+                <span className="font-[family-name:var(--font-ibm-plex-sans)] text-[13px] font-medium text-on-surface">
                   {value}
                 </span>
               </div>

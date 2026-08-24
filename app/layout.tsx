@@ -392,6 +392,12 @@ export default function RootLayout({
         />
       </head>
       <body className="font-[family-name:var(--font-inter)] text-on-background bg-surface antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-primary focus:text-on-primary focus:px-4 focus:py-2 font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.1em]"
+        >
+          Skip to content
+        </a>
         {children}
       </body>
     </html>

@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import siteConfig from "@/config/site.json";
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const onHome = pathname === "/";
+  const hrefFor = (item: string) => (onHome ? `#${item}` : `/#${item}`);
 
   return (
     <>
@@ -24,12 +29,24 @@ export default function Nav() {
             {["work", "services", "contact"].map((item) => (
               <a
                 key={item}
-                href={`#${item}`}
+                href={hrefFor(item)}
                 className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] font-medium uppercase tracking-[0.08em] text-secondary hover:text-primary transition-colors"
               >
                 {item}
               </a>
             ))}
+            <Link
+              href="/projects"
+              className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] font-medium uppercase tracking-[0.08em] text-secondary hover:text-primary transition-colors"
+            >
+              projects
+            </Link>
+            <Link
+              href="/hire"
+              className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] font-medium uppercase tracking-[0.08em] text-secondary hover:text-primary transition-colors"
+            >
+              hire
+            </Link>
           </nav>
 
           {/* Divider */}
@@ -75,13 +92,27 @@ export default function Nav() {
             {["work", "services", "contact"].map((item) => (
               <a
                 key={item}
-                href={`#${item}`}
+                href={hrefFor(item)}
                 onClick={() => setMenuOpen(false)}
                 className="font-[family-name:var(--font-ibm-plex-sans)] text-[14px] uppercase tracking-[0.05em] text-on-surface py-5 border-b border-outline-variant hover:text-primary transition-colors"
               >
                 {item}
               </a>
             ))}
+            <Link
+              href="/projects"
+              onClick={() => setMenuOpen(false)}
+              className="font-[family-name:var(--font-ibm-plex-sans)] text-[14px] uppercase tracking-[0.05em] text-on-surface py-5 border-b border-outline-variant hover:text-primary transition-colors"
+            >
+              Projects
+            </Link>
+            <Link
+              href="/hire"
+              onClick={() => setMenuOpen(false)}
+              className="font-[family-name:var(--font-ibm-plex-sans)] text-[14px] uppercase tracking-[0.05em] text-on-surface py-5 border-b border-outline-variant hover:text-primary transition-colors"
+            >
+              Hire
+            </Link>
           </nav>
 
           <div className="mt-8 flex flex-col gap-5">

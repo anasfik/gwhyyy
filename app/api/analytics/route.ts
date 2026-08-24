@@ -36,6 +36,14 @@ export async function GET() {
     ORDER BY count DESC LIMIT 10
   `).all() as PageRow[];
 
+  const topEvents = db.prepare(`
+    SELECT name, COUNT(*) as count
+    FROM events
+    WHERE created_at >= datetime('now', '-30 days')
+    GROUP BY name
+    ORDER BY count DESC LIMIT 15
+  `).all() as { name: string; count: number }[];
+
   return NextResponse.json({
     totalViews,
     views7d,
@@ -43,5 +51,6 @@ export async function GET() {
     unreadContacts,
     dailyViews,
     topPages,
+    topEvents,
   });
 }

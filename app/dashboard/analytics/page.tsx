@@ -9,6 +9,7 @@ type Stats = {
   unreadContacts: number;
   dailyViews: { day: string; count: number }[];
   topPages: { path: string; count: number }[];
+  topEvents?: { name: string; count: number }[];
 };
 
 export default function AnalyticsPage() {
@@ -94,6 +95,27 @@ export default function AnalyticsPage() {
                   </div>
                 )}
               </div>
+
+              {/* Top events (CTA clicks, outbound, form submits) */}
+              {stats!.topEvents && stats!.topEvents.length > 0 && (
+                <div className="border border-outline-variant bg-surface mb-8">
+                  <div className="px-6 py-4 border-b border-outline-variant">
+                    <span className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] text-secondary">
+                      Top Events — Last 30 Days
+                    </span>
+                  </div>
+                  <table className="w-full">
+                    <tbody className="divide-y divide-outline-variant">
+                      {stats!.topEvents.map((e) => (
+                        <tr key={e.name} className="hover:bg-surface-container-high transition-colors">
+                          <td className="py-4 px-6 font-[family-name:var(--font-ibm-plex-mono)] text-[13px]">{e.name}</td>
+                          <td className="py-4 px-6 text-right font-[family-name:var(--font-ibm-plex-sans)] text-[16px] font-medium">{e.count}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
               {/* Top pages */}
               <div className="border border-outline-variant bg-surface">

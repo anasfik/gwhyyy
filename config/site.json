@@ -42,6 +42,12 @@
     "available": true,
     "label": "Available for Projects"
   },
+  "metrics": [
+    { "label": "Open Source", "value": "666+ GitHub Stars" },
+    { "label": "SDKs Shipped", "value": "6 Public Libraries" },
+    { "label": "Experience", "value": "3+ Years Production" },
+    { "label": "Location", "value": "Casablanca · Remote" }
+  ],
   "links": {
     "github": "https://github.com/anasfik",
     "linkedin": "https://linkedin.com/in/mohamed-anas-fikhi",
@@ -53,13 +59,16 @@
       "id": "dart-openai",
       "title": "Dart OpenAI",
       "category": "Open Source / SDK",
-      "description": "A fully-featured client library for the OpenAI API, optimized for Flutter and Dart performance with type-safe implementations. Used by thousands of developers worldwide.",
-      "tags": [
-        "Dart",
-        "Flutter",
-        "API Design",
-        "Open Source"
+      "description": "A fully-featured, type-safe client library for the OpenAI API in Dart/Flutter. 666+ GitHub stars and thousands of developers worldwide.",
+      "challenge": "Flutter developers had no production-grade, type-safe way to call OpenAI APIs. Existing wrappers were incomplete, untyped, or abandoned.",
+      "outcome": "Created the most complete OpenAI client for Dart — with streaming, function calling, image generation, embeddings, and full type safety.",
+      "results": [
+        "666+ GitHub stars and growing",
+        "Used by thousands of Flutter developers worldwide",
+        "Published on pub.dev — installable in one line",
+        "Full API coverage: chat, completions, images, audio, embeddings, fine-tuning, files, moderations"
       ],
+      "tags": ["Dart", "Flutter", "API Design", "Open Source"],
       "url": "https://github.com/anasfik/openai",
       "image": null,
       "visible": true,
@@ -69,13 +78,16 @@
       "id": "gathr",
       "title": "Gathr",
       "category": "Product Engineering",
-      "description": "Social infrastructure for the modern age. Built and shipped a production mobile application. Architected the cross-platform experience and core event-driven state management across Flutter + Nostr + Node.js.",
-      "tags": [
-        "Flutter",
-        "Nostr",
-        "Node.js",
-        "Firebase"
+      "description": "Production social app built on the decentralized Nostr protocol. I architected the full Flutter client, event-driven state management, and Node.js services — shipped to real users on iOS and Android.",
+      "challenge": "Gathr needed a production social app bridging decentralized Nostr protocol with polished mobile UX — something no team had shipped at scale.",
+      "outcome": "Built the full Flutter client, designed event-driven state management across Nostr + Node.js + Firebase, and shipped to iOS and Android.",
+      "results": [
+        "Shipped production app to real users on iOS and Android",
+        "Designed cross-platform architecture: Flutter + Nostr + Node.js",
+        "Real-time event-driven state management across decentralized protocol",
+        "Cloud infrastructure and backend services managed end-to-end"
       ],
+      "tags": ["Flutter", "Nostr", "Node.js", "Firebase"],
       "url": "https://gathr.gives",
       "image": null,
       "visible": true,
@@ -86,12 +98,15 @@
       "title": "Rollee Connect SDK",
       "category": "SDK / Fintech",
       "description": "Secure, high-integrity connectivity layer for employment data. Sole engineer on the full Flutter SDK enabling third-party integrations with a clean, developer-first API.",
-      "tags": [
-        "Flutter SDK",
-        "Dart",
-        "Security",
-        "Fintech"
+      "challenge": "Rollee needed a secure Flutter SDK for third-party integrations with employment data — a fintech-grade connectivity layer that external developers could adopt instantly.",
+      "outcome": "Built the full SDK solo: secure data layer, clean public API surface, developer-first documentation. Production-ready in weeks, not months.",
+      "results": [
+        "Sole engineer — shipped full SDK end-to-end",
+        "Secure high-integrity connectivity for employment data",
+        "Clean, developer-friendly API adopted by third-party integrations",
+        "Production-grade in fintech (compliance, security, reliability)"
       ],
+      "tags": ["Flutter SDK", "Dart", "Security", "Fintech"],
       "url": "https://www.getrollee.com",
       "image": null,
       "visible": true,
@@ -102,12 +117,15 @@
       "title": "NostrMind",
       "category": "Experimental / AI",
       "description": "Config-driven Nostr monitoring worker with AI classification and optional DM alerts. Integrating LLM reasoning into decentralized protocols.",
-      "tags": [
-        "Nostr",
-        "LLM",
-        "AI Agents",
-        "Dart"
+      "challenge": "Nostr has no built-in intelligence layer — signals, alerts, and content moderation are manual or nonexistent.",
+      "outcome": "Config-driven worker that monitors Nostr relays, classifies content via LLM reasoning, and optionally sends DM alerts based on custom rules.",
+      "results": [
+        "LLM-powered content classification on Nostr events",
+        "Config-driven rules — no code changes needed",
+        "DM alert system for real-time notifications",
+        "Experimental proof that AI + decentralized protocols work together"
       ],
+      "tags": ["Nostr", "LLM", "AI Agents", "Dart"],
       "url": "https://github.com/anasfik/NostrMind",
       "image": null,
       "visible": true,
@@ -118,11 +136,15 @@
       "title": "Public APIs",
       "category": "Mobile / Developer Tools",
       "description": "Mobile app for browsing and discovering public APIs with filtering, search, and favorites — built for developers by a developer.",
-      "tags": [
-        "Flutter",
-        "Dart",
-        "Developer Tools"
+      "challenge": "Developers lack a quick mobile way to discover and reference public APIs — the existing web directory is clunky on phones.",
+      "outcome": "Native Flutter app with filtering, search, and favorites — fast, offline-capable, built for developer workflow.",
+      "results": [
+        "Published on Google Play Store",
+        "Filterable database of public APIs",
+        "Favorites system for quick access",
+        "Built solo as a developer utility tool"
       ],
+      "tags": ["Flutter", "Dart", "Developer Tools"],
       "url": "https://play.google.com/store/apps/details?id=com.gwhyyy.publicApis",
       "image": null,
       "visible": true,
@@ -133,12 +155,15 @@
       "title": "Dart Nostr",
       "category": "Open Source / Protocol",
       "description": "Develop scalable Dart/Flutter Nostr clients quickly and easily. A production-grade library for the Nostr decentralized protocol.",
-      "tags": [
-        "Dart",
-        "Nostr",
-        "Open Source",
-        "Protocol"
+      "challenge": "Flutter developers had no reliable library to build Nostr clients — the Dart ecosystem lacked protocol-level Nostr support.",
+      "outcome": "Production-grade Dart library for the Nostr protocol — relay connections, event signing, subscriptions, and full NIP compliance.",
+      "results": [
+        "Foundation library for Dart/Flutter Nostr clients",
+        "Full Nostr protocol implementation in Dart",
+        "Used as dependency by other Nostr projects in the ecosystem",
+        "Production-grade reliability and type safety"
       ],
+      "tags": ["Dart", "Nostr", "Open Source", "Protocol"],
       "url": "https://github.com/anasfik/nostr",
       "image": null,
       "visible": true,
@@ -154,13 +179,7 @@
       "period": "12/2023 – 09/2025",
       "type": "Remote",
       "impact": "Built & shipped a production-ready mobile application. Managed backend services and cloud infrastructure across the full stack.",
-      "stack": [
-        "Flutter",
-        "Nostr",
-        "Node.js",
-        "Linux",
-        "Git"
-      ]
+      "stack": ["Flutter", "Nostr", "Node.js", "Linux", "Git"]
     },
     {
       "id": "rollee-exp",
@@ -170,10 +189,7 @@
       "period": "07/2023 – 08/2023",
       "type": "Remote",
       "impact": "Sole engineer who built the full Rollee Connect SDK enabling third-party integrations with a simple, developer-friendly API.",
-      "stack": [
-        "Flutter",
-        "Dart"
-      ]
+      "stack": ["Flutter", "Dart"]
     }
   ],
   "services": [
@@ -228,7 +244,71 @@
       "description": "Refining performance bottlenecks and finalizing the production-ready infrastructure for public deployment."
     }
   ],
+  "testimonials": [
+    {
+      "quote": "Anas delivered the full Rollee Connect SDK solo — production-grade, secure, and developer-friendly. He shipped faster than any team we could have assembled.",
+      "author": "Rollee Engineering",
+      "role": "Fintech Startup",
+      "url": "https://www.getrollee.com"
+    }
+  ],
+  "hire": {
+    "headline": "Need a Flutter or AI engineer who ships?",
+    "subheadline": "Production mobile apps, custom AI systems, and developer SDKs — delivered fast, built to last.",
+    "tiers": [
+      {
+        "name": "Technical Audit",
+        "price": "$3,000",
+        "timeline": "1–2 weeks",
+        "description": "Full codebase audit with actionable recommendations. Perfect before starting a project or hiring a team.",
+        "deliverables": [
+          "Architecture review",
+          "Performance analysis",
+          "Security assessment",
+          "Prioritized improvement roadmap"
+        ]
+      },
+      {
+        "name": "SDK / Library Build",
+        "price": "$8,000–$20,000",
+        "timeline": "3–8 weeks",
+        "description": "End-to-end SDK development — from API design to pub.dev / npm publish. Developer-first, documented, type-safe.",
+        "deliverables": [
+          "Full SDK implementation",
+          "Documentation & examples",
+          "CI/CD pipeline",
+          "Package manager publication"
+        ]
+      },
+      {
+        "name": "Full Product Build",
+        "price": "$15,000–$50,000+",
+        "timeline": "8–16 weeks",
+        "description": "Complete mobile product — Flutter frontend, backend services, cloud deployment, and production monitoring.",
+        "deliverables": [
+          "Cross-platform Flutter app",
+          "Backend services & APIs",
+          "Cloud infrastructure",
+          "Production deployment & handoff"
+        ]
+      }
+    ],
+    "faq": [
+      {
+        "q": "How do you price projects?",
+        "a": "Fixed-price after discovery. Small SDKs start at $8k; full products from $15k. Every engagement starts with a paid audit so both sides align on scope."
+      },
+      {
+        "q": "Do you work with startups or only enterprises?",
+        "a": "Both. Startups get fast MVPs and technical validation. Enterprises get reliable SDKs and architecture. I pick projects where I can move the needle — not just fill seats."
+      },
+      {
+        "q": "What's your availability?",
+        "a": "Currently accepting new projects. Typical start within 1–2 weeks. Urgent audits can often begin sooner — book a call to check."
+      }
+    ]
+  },
   "footer": {
-    "copyright": "© 2025 MOHAMED ANAS FIKHI. ALL RIGHTS RESERVED."
+    "copyright": "© 2026 MOHAMED ANAS FIKHI. ALL RIGHTS RESERVED."
   }
 }

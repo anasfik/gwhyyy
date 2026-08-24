@@ -3,32 +3,35 @@ import siteConfig from "@/config/site.json";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.seo.url;
-  const now = new Date();
+
+  const projectPages: MetadataRoute.Sitemap = siteConfig.projects
+    .filter((p) => p.visible)
+    .map((p) => ({
+      url: `${base}/projects/${p.id}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }));
 
   return [
     {
       url: base,
-      lastModified: now,
-      changeFrequency: "monthly",
+      lastModified: new Date(),
+      changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${base}/#work`,
-      lastModified: now,
+      url: `${base}/projects`,
+      lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.9,
     },
+    ...projectPages,
     {
-      url: `${base}/#services`,
-      lastModified: now,
+      url: `${base}/hire`,
+      lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${base}/#contact`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.7,
+      priority: 0.9,
     },
   ];
 }

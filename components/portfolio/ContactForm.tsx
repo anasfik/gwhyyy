@@ -19,7 +19,8 @@ export default function ContactForm() {
     subject: "",
     budget: "",
     message: "",
-  });
+    website: "", // honeypot
+  });  const [mountedAt] = useState(() => Date.now());
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -34,11 +35,11 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, submittedAt: mountedAt }),
       });
       if (res.ok) {
         setStatus("sent");
-        setForm({ name: "", email: "", subject: "", budget: "", message: "" });
+        setForm({ name: "", email: "", subject: "", budget: "", message: "", website: "" });
       } else {
         setStatus("error");
       }
@@ -196,6 +197,20 @@ export default function ContactForm() {
                     rows={6}
                     placeholder="Tell me about your technical requirements, timeline, and what success looks like..."
                     className="border border-outline-variant bg-transparent p-4 focus:outline-none focus:border-primary font-[family-name:var(--font-inter)] text-[16px] resize-none transition-colors"
+                  />
+                </div>
+
+                {/* Honeypot — hidden from humans, bots fill it */}
+                <div className="hidden" aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={form.website ?? ""}
+                    onChange={handleChange}
                   />
                 </div>
 
