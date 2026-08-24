@@ -5,10 +5,10 @@ export default function Hero() {
     <section className="max-w-[1200px] mx-auto px-6 md:px-[64px] py-[128px]" aria-label="Introduction">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div className="md:col-span-10">
-          <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[14px] text-secondary mb-8 block tracking-tight">
-            [ FLUTTER DEVELOPER &amp; AI ENGINEER — AVAILABLE FOR HIRE ]
-          </span>
           <h1 className="font-[family-name:var(--font-ibm-plex-sans)] text-[40px] md:text-[72px] font-semibold leading-[1.1] tracking-[-0.02em] text-primary mb-8">
+            <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[14px] text-secondary mb-8 block tracking-tight uppercase">
+              {siteConfig.personal.name} — Flutter Developer &amp; AI Engineer
+            </span>
             {siteConfig.personal.tagline}
           </h1>
           <p className="font-[family-name:var(--font-inter)] text-[18px] leading-[1.6] text-secondary max-w-2xl mb-12">

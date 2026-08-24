@@ -27,9 +27,9 @@ export default function ServicesGrid() {
               </div>
 
               {/* Title */}
-              <h4 className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-medium leading-[1.4] mb-4">
+              <h3 className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-medium leading-[1.4] mb-4">
                 {service.title}
-              </h4>
+              </h3>
 
               {/* Description */}
               <p className="font-[family-name:var(--font-inter)] text-[16px] leading-[1.6] text-secondary flex-grow">

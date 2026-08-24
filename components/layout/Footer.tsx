@@ -60,6 +60,17 @@ export default function Footer() {
                 Schedule a Call
               </a>
             </div>
+            <div className="flex flex-col gap-3">
+              <span className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] text-secondary">
+                Profile
+              </span>
+              <a href="/resume" className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] hover:text-primary transition-colors">
+                Resume
+              </a>
+              <a href="/llms.txt" className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] hover:text-primary transition-colors">
+                AI Index
+              </a>
+            </div>
           </div>
         </div>
 

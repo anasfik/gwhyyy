@@ -1,11 +1,10 @@
-import { buildLlmsIndex } from "@/lib/public-profile";
+import { publicProfile } from "@/lib/public-profile";
 
 export const dynamic = "force-static";
 
 export function GET() {
-  return new Response(buildLlmsIndex(), {
+  return Response.json(publicProfile, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "public, max-age=3600, s-maxage=86400",
       "X-Robots-Tag": "index, follow",
     },

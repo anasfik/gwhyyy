@@ -145,6 +145,11 @@ export const metadata: Metadata = {
 // ─── JSON-LD Structured Data ──────────────────────────────────────────────────
 const BASE = siteConfig.seo.url;
 
+function toIsoMonth(value: string) {
+  const [month, year] = value.trim().split("/");
+  return year && month ? `${year}-${month.padStart(2, "0")}` : value.trim();
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -207,13 +212,11 @@ const jsonLd = {
         "Linux",
         "VPS Deployment",
       ],
-      worksFor: [
-        {
-          "@type": "Organization",
-          name: "Gathr",
-          url: "https://gathr.gives",
-        },
-      ],
+      alumniOf: siteConfig.experience.map((experience) => ({
+        "@type": "Organization",
+        name: experience.company,
+        url: experience.url,
+      })),
     },
 
     // ── Professional Service ─────────────────────────────────────────────────
@@ -270,6 +273,7 @@ const jsonLd = {
       name: "Mohamed Anas Fikhi — Flutter Developer & AI Engineer for Hire",
       isPartOf: { "@id": `${BASE}/#website` },
       about: { "@id": `${BASE}/#person` },
+      mainEntity: { "@id": `${BASE}/#person` },
       description: siteConfig.seo.description,
       inLanguage: "en",
       breadcrumb: {
@@ -335,21 +339,26 @@ const jsonLd = {
       "@type": "ItemList",
       "@id": `${BASE}/#experience`,
       name: "Work Experience",
-      itemListElement: siteConfig.experience.map((e, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: {
-          "@type": "OrganizationRole",
-          roleName: e.role,
-          startDate: e.period.split("–")[0].trim().replace("/", "-"),
-          worksFor: {
-            "@type": "Organization",
-            name: e.company,
-            url: e.url,
+      itemListElement: siteConfig.experience.map((e, i) => {
+        const [startDate, endDate] = e.period.split("–");
+
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          item: {
+            "@type": "OrganizationRole",
+            roleName: e.role,
+            startDate: toIsoMonth(startDate),
+            endDate: endDate ? toIsoMonth(endDate) : undefined,
+            worksFor: {
+              "@type": "Organization",
+              name: e.company,
+              url: e.url,
+            },
+            description: e.impact,
           },
-          description: e.impact,
-        },
-      })),
+        };
+      }),
     },
   ],
 };
@@ -384,6 +393,10 @@ export default function RootLayout({
         <link rel="me" href={siteConfig.links.github} />
         <link rel="me" href={siteConfig.links.linkedin} />
         <link rel="me" href={`mailto:${siteConfig.personal.email}`} />
+
+        {/* Machine-readable representations of the public professional profile */}
+        <link rel="alternate" type="text/markdown" href="/llms.md" title="AI-readable professional profile" />
+        <link rel="alternate" type="application/json" href="/profile.json" title="Structured professional profile" />
 
         {/* JSON-LD Structured Data */}
         <script

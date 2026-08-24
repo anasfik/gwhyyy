@@ -2,7 +2,7 @@ import siteConfig from "@/config/site.json";
 
 export default function ExperienceSection() {
   return (
-    <section className="border-t border-outline-variant bg-surface-container-low">
+    <section className="border-t border-outline-variant bg-surface-container-low" id="experience">
       <div className="max-w-[1200px] mx-auto px-6 md:px-[64px] py-[128px]">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-16">
@@ -32,9 +32,9 @@ export default function ExperienceSection() {
               {/* Top row */}
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-medium leading-[1.4] mb-1 group-hover:underline underline-offset-4">
+                  <h3 className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-medium leading-[1.4] mb-1 group-hover:underline underline-offset-4">
                     {exp.company}
-                  </div>
+                  </h3>
                   <div className="font-[family-name:var(--font-inter)] text-[16px] text-secondary leading-[1.6]">
                     {exp.role}
                   </div>

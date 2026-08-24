@@ -28,9 +28,9 @@ export default function ProcessSteps() {
                   )}
                 </div>
                 <div className="pt-1">
-                  <h5 className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-medium leading-[1.4] mb-2">
+                  <h3 className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-medium leading-[1.4] mb-2">
                     {step.title}
-                  </h5>
+                  </h3>
                   <p className="font-[family-name:var(--font-inter)] text-[16px] leading-[1.6] text-secondary">
                     {step.description}
                   </p>

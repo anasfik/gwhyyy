@@ -21,6 +21,7 @@ WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN mkdir -p public
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -66,6 +67,6 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:3000/api/health || exit 1
+  CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1
 
 CMD ["node", "server.js"]
