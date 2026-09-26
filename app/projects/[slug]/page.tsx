@@ -5,176 +5,40 @@ import Nav from "@/components/layout/Nav";
 import Footer from "@/components/layout/Footer";
 import PageTracker from "@/components/portfolio/PageTracker";
 import ProjectVisual from "@/components/portfolio/ProjectVisual";
-import siteConfig from "@/config/site.json";
+import { getProjects, getSiteContent } from "@/lib/site-content";
 
-function getVisibleProjects() {
-  return siteConfig.projects.filter((p) => p.visible).sort((a, b) => a.order - b.order);
-}
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return getVisibleProjects().map((p) => ({ slug: p.id }));
-}
+export function generateStaticParams() { return getProjects(getSiteContent()).map((project) => ({ slug: project.slug })); }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const project = getVisibleProjects().find((p) => p.id === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const { seo } = getSiteContent();
+  const project = getProjects(getSiteContent()).find((item) => item.slug === slug);
   if (!project) return {};
-
-  const url = `${siteConfig.seo.url}/projects/${project.id}`;
-  return {
-    title: `${project.title} — ${project.category}`,
-    description: project.description,
-    keywords: project.tags,
-    alternates: { canonical: url },
-    openGraph: {
-      url,
-      title: `${project.title} — ${siteConfig.personal.name}`,
-      description: project.description,
-    },
-  };
+  const url = `${seo.url}/projects/${project.slug}`;
+  return { title: `${project.name} — ${project.category}`, description: project.summary, keywords: [...project.stack], alternates: { canonical: url }, openGraph: { url, title: `${project.name} — GWHYYY`, description: project.summary, images: [`/projects/${project.slug}/opengraph-image`] }, twitter: { card: "summary_large_image", title: `${project.name} — GWHYYY`, description: project.summary, images: [`/projects/${project.slug}/opengraph-image`] } };
 }
 
-export default function ProjectDetailPage({ params }: { params: { slug: string } }) {
-  const project = getVisibleProjects().find((p) => p.id === params.slug);
+export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const { seo, links, availability, copy } = getSiteContent();
+  const text = copy.project;
+  const projects = getProjects(getSiteContent());
+  const project = projects.find((item) => item.slug === slug);
   if (!project) notFound();
+  const index = projects.findIndex((item) => item.slug === project.slug);
+  const next = projects[(index + 1) % projects.length];
+  const jsonLd = { "@context": "https://schema.org", "@type": "SoftwareSourceCode", name: project.name, description: project.summary, url: `${seo.url}/projects/${project.slug}`, codeRepository: project.link, author: { "@id": `${seo.url}/#person` }, programmingLanguage: [...project.stack] };
 
-  const all = getVisibleProjects();
-  const idx = all.findIndex((p) => p.id === project.id);
-  const prev = idx > 0 ? all[idx - 1] : null;
-  const next = idx < all.length - 1 ? all[idx + 1] : null;
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: project.title,
-    description: project.description,
-    url: project.url,
-    applicationCategory: "DeveloperApplication",
-    author: {
-      "@type": "Person",
-      name: siteConfig.personal.name,
-      url: siteConfig.seo.url,
-    },
-    keywords: project.tags.join(", "),
-  };
-
-  return (
-    <>
-      <PageTracker />
-      <Nav />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <main id="main" className="pt-20">
-        <article className="max-w-[1200px] mx-auto px-6 md:px-[64px] py-[96px]">
-          <Link
-            href="/projects"
-            className="font-[family-name:var(--font-ibm-plex-mono)] text-[12px] uppercase tracking-[0.15em] text-secondary hover:text-primary transition-colors inline-flex items-center gap-2 mb-12"
-          >
-            <span aria-hidden="true">←</span> All Projects
-          </Link>
-
-          <div className="text-[12px] uppercase tracking-[0.05em] text-secondary mb-3 font-[family-name:var(--font-ibm-plex-sans)]">
-            {project.category}
-          </div>
-          <h1 className="text-[40px] md:text-[64px] font-semibold leading-[1.1] tracking-[-0.02em] mb-8 font-[family-name:var(--font-ibm-plex-sans)]">
-            {project.title}
-          </h1>
-          <p className="text-[18px] leading-[1.7] text-secondary max-w-3xl mb-12 font-[family-name:var(--font-inter)]">
-            {project.description}
-          </p>
-
-          {/* Hero image */}
-          {project.url && (
-            <a
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-track={`project-open:${project.id}`}
-              className="block border border-outline-variant aspect-[16/9] overflow-hidden bg-surface-container mb-12 hover:opacity-95 transition-opacity"
-            >
-              <ProjectVisual project={project} />
-            </a>
-          )}
-
-          {/* Case study: Challenge → Built → Results */}
-          {(project.challenge || project.outcome || project.results) && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              {project.challenge && (
-                <div>
-                  <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] uppercase tracking-[0.15em] text-secondary mb-3">
-                    01 / Challenge
-                  </h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[16px] leading-[1.7] text-on-surface">
-                    {project.challenge}
-                  </p>
-                </div>
-              )}
-              {project.outcome && (
-                <div>
-                  <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] uppercase tracking-[0.15em] text-secondary mb-3">
-                    02 / What I Built
-                  </h3>
-                  <p className="font-[family-name:var(--font-inter)] text-[16px] leading-[1.7] text-on-surface">
-                    {project.outcome}
-                  </p>
-                </div>
-              )}
-              {project.results && project.results.length > 0 && (
-                <div>
-                  <h3 className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] uppercase tracking-[0.15em] text-secondary mb-3">
-                    03 / Results
-                  </h3>
-                  <ul className="space-y-2">
-                    {project.results.map((r) => (
-                      <li key={r} className="font-[family-name:var(--font-inter)] text-[15px] leading-[1.6] text-on-surface flex gap-2">
-                        <span className="text-primary flex-shrink-0 mt-1">→</span>
-                        {r}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            {project.tags.map((tag) => (
-              <span key={tag} className="px-4 py-2 border border-outline-variant text-[11px] uppercase tracking-[0.05em] font-[family-name:var(--font-ibm-plex-sans)]">
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* CTA */}
-          {project.url && (
-            <a
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-track={`project-open:${project.id}`}
-              className="inline-block bg-primary text-on-primary font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.15em] px-8 py-5 hover:opacity-90 transition-opacity"
-            >
-              Open Project →
-            </a>
-          )}
-
-          {/* Prev / Next */}
-          <nav className="mt-24 pt-8 border-t border-outline-variant flex justify-between gap-6" aria-label="Project navigation">
-            {prev ? (
-              <Link href={`/projects/${prev.id}`} className="group flex flex-col gap-1 min-w-0">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-secondary font-[family-name:var(--font-ibm-plex-mono)]">← PREV</span>
-                <span className="text-[18px] font-medium group-hover:underline underline-offset-4 truncate">{prev.title}</span>
-              </Link>
-            ) : <span />}
-            {next && (
-              <Link href={`/projects/${next.id}`} className="group flex flex-col gap-1 items-end text-right min-w-0">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-secondary font-[family-name:var(--font-ibm-plex-mono)]">NEXT →</span>
-                <span className="text-[18px] font-medium group-hover:underline underline-offset-4 truncate">{next.title}</span>
-              </Link>
-            )}
-          </nav>
-        </article>
-      </main>
-      <Footer />
-    </>
-  );
+  return <><PageTracker /><Nav copy={copy.nav} brand={copy.brand} calendly={links.calendly} availabilityLabel={availability.label} /><main id="main" className="pt-[72px]"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><article>
+    <header className="section border-b border-line"><div className="shell"><Link href="/projects" className="label text-muted hover:text-paper">{text.backLabel}</Link><div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-end"><div><p className="label text-signal">{project.category}</p><h1 className="mt-5 text-5xl font-semibold tracking-[-.065em] md:text-8xl">{project.name}</h1><p className="mt-7 max-w-2xl text-xl leading-8 text-muted">{project.summary}</p></div><dl className="grid grid-cols-2 gap-px bg-line border border-line"><div className="bg-panel p-5"><dt className="label text-muted">Role</dt><dd className="mt-3 text-sm">{project.ownership[0]}</dd></div><div className="bg-panel p-5"><dt className="label text-muted">Signal</dt><dd className="mt-3 text-sm text-signal">{project.signal}</dd></div></dl></div><a href={project.link} target="_blank" rel="noopener noreferrer" data-track={`project_external:${project.slug}`} className="mt-10 inline-flex bg-signal px-6 py-4 text-sm font-semibold uppercase tracking-[.1em] text-ink">{text.openCta} ↗</a></div></header>
+    <section className="border-b border-line"><div className="shell py-8 md:py-14"><div className="aspect-[16/10] overflow-hidden border border-line md:aspect-[16/7]"><ProjectVisual project={project} /></div></div></section>
+    <section className="section border-b border-line"><div className="shell grid gap-14 lg:grid-cols-[.55fr_1fr]"><div><p className="label text-signal">{text.contextLabel}</p><h2 className="mt-5 text-4xl font-semibold tracking-[-.05em]">{text.contextHeading}</h2></div><p className="max-w-2xl text-pretty text-xl leading-9">{project.problem}</p></div></section>
+    <section className="section border-b border-line bg-panel"><div className="shell grid gap-14 lg:grid-cols-[.55fr_1fr]"><div><p className="label text-signal">{text.architectureLabel}</p><h2 className="mt-5 text-4xl font-semibold tracking-[-.05em]">{text.architectureHeading}</h2></div><div><p className="max-w-2xl text-lg leading-8 text-muted">{project.approach}</p><div className="mt-10 grid gap-2 sm:grid-cols-2">{project.architecture.map((node, i) => <div key={node} className="border border-line bg-ink p-5"><span className="label text-muted">{text.nodePrefix} / 0{i + 1}</span><strong className="mt-4 block">{node}</strong></div>)}</div></div></div></section>
+    <section className="section border-b border-line"><div className="shell grid gap-14 lg:grid-cols-2"><div><p className="label text-signal">{text.ownershipLabel}</p><h2 className="mt-5 text-4xl font-semibold tracking-[-.05em]">{text.ownershipHeading}</h2><ul className="mt-8 border-t border-line">{project.ownership.map((item) => <li key={item} className="border-b border-line py-4 text-muted">{item}</li>)}</ul></div><div><p className="label text-signal">{text.resultsLabel}</p><h2 className="mt-5 text-4xl font-semibold tracking-[-.05em]">{text.resultsHeading}</h2><ul className="mt-8 border-t border-line">{project.results.map((item) => <li key={item} className="flex gap-3 border-b border-line py-4"><span className="text-signal">→</span>{item}</li>)}</ul></div></div></section>
+    <section className="section border-b border-line bg-panel"><div className="shell"><p className="label text-signal">{text.technologyLabel}</p><ul className="mt-8 flex flex-wrap gap-3">{project.stack.map((item) => <li key={item} className="border border-line bg-ink px-4 py-3 font-mono text-xs text-muted">{item}</li>)}</ul></div></section>
+    <nav className="section" aria-label="Project navigation"><div className="shell"><p className="label text-muted">{text.nextPrefix} / 0{(index + 1) % projects.length + 1}</p><Link href={`/projects/${next.slug}`} className="link-arrow mt-5 flex items-end justify-between border-b border-line pb-8 text-4xl font-semibold tracking-[-.05em] hover:border-signal hover:text-signal md:text-7xl"><span>{next.name}</span><span className="inline-block text-2xl">→</span></Link></div></nav>
+  </article></main><Footer /></>;
 }

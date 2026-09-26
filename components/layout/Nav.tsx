@@ -1,147 +1,91 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import siteConfig from "@/config/site.json";
 
-export default function Nav() {
-  const [menuOpen, setMenuOpen] = useState(false);
+type NavCopy = {
+  links: { label: string; href: string }[];
+  availableLabel: string;
+  primaryCta: string;
+  secondaryCta: string;
+};
+
+export default function Nav({ copy, brand, calendly, availabilityLabel }: { copy: NavCopy; brand: { name: string; signature: string }; calendly: string; availabilityLabel: string }) {
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const onHome = pathname === "/";
-  const hrefFor = (item: string) => (onHome ? `#${item}` : `/#${item}`);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", close);
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", close);
+    };
+  }, [open]);
 
   return (
-    <>
-      <header className="fixed top-0 left-0 w-full z-50 h-20 flex items-center justify-between px-6 md:px-[64px] bg-surface border-b border-outline-variant">
-        {/* Brand — left */}
-        <a
-          href="/"
-          className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-bold tracking-[-0.03em] text-primary flex-shrink-0"
-        >
-          GWHYYY
-        </a>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-ink/95 backdrop-blur-md">
+      <div className="shell flex h-[72px] items-center justify-between">
+        <Link href="/" className="flex items-baseline gap-3" aria-label={`${brand.name} home`}>
+          <span className="text-xl font-semibold tracking-[-.05em]">{brand.name}</span>
+          <span className="label hidden text-muted sm:inline">{brand.signature}</span>
+        </Link>
 
-        {/* Desktop: all items right-aligned in one row */}
-        <div className="hidden md:flex items-center gap-8">
-          {/* Nav links */}
-          <nav className="flex items-center gap-8">
-            {["work", "services", "contact"].map((item) => (
-              <a
-                key={item}
-                href={hrefFor(item)}
-                className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] font-medium uppercase tracking-[0.08em] text-secondary hover:text-primary transition-colors"
+        <div className="hidden items-center gap-7 lg:flex">
+          <nav aria-label="Main navigation" className="flex items-center gap-6">
+            {copy.links.map((link) => (
+              <Link
+                key={link.href + link.label}
+                href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
+                className="text-sm text-muted transition-colors duration-200 hover:text-paper"
               >
-                {item}
-              </a>
+                {link.label}
+              </Link>
             ))}
-            <Link
-              href="/projects"
-              className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] font-medium uppercase tracking-[0.08em] text-secondary hover:text-primary transition-colors"
-            >
-              projects
-            </Link>
-            <Link
-              href="/hire"
-              className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] font-medium uppercase tracking-[0.08em] text-secondary hover:text-primary transition-colors"
-            >
-              hire
-            </Link>
           </nav>
-
-          {/* Divider */}
-          <div className="w-px h-5 bg-outline-variant" />
-
-          {/* Availability badge */}
-          {siteConfig.availability.available && (
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-scale-pulse flex-shrink-0" />
-              <span className="font-[family-name:var(--font-ibm-plex-sans)] text-[11px] uppercase tracking-[0.08em] text-secondary whitespace-nowrap">
-                {siteConfig.availability.label}
-              </span>
-            </div>
-          )}
-
-          {/* CTA */}
-          <a
-            href={siteConfig.links.calendly}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-primary text-on-primary font-[family-name:var(--font-ibm-plex-sans)] text-[11px] uppercase tracking-[0.12em] px-5 py-3 hover:opacity-90 transition-opacity whitespace-nowrap"
-          >
-            Schedule a Call
-          </a>
+          <span className="h-5 w-px bg-line" />
+          <span className="label flex items-center gap-2 text-muted">
+            <i className="status-dot h-1.5 w-1.5 rounded-full bg-signal" aria-hidden="true" />
+            {copy.availableLabel}
+          </span>
+          <Link href="/#contact" className="bg-signal px-5 py-3 text-xs font-semibold uppercase tracking-[.1em] text-ink transition-colors hover:bg-paper active:translate-y-px">
+            {copy.primaryCta}
+          </Link>
         </div>
 
-        {/* Mobile: hamburger only */}
         <button
-          className="md:hidden text-primary p-1"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
+          type="button"
+          className="relative h-11 w-11 lg:hidden"
+          aria-label={open ? "Close navigation" : "Open navigation"}
+          aria-expanded={open}
+          aria-controls="mobile-navigation"
+          onClick={() => setOpen((value) => !value)}
         >
-          <span className="material-symbols-outlined text-[24px]">
-            {menuOpen ? "close" : "menu"}
-          </span>
+          <span className={`absolute left-2.5 top-[17px] h-px w-6 bg-paper transition-transform ${open ? "translate-y-[4px] rotate-45" : ""}`} />
+          <span className={`absolute left-2.5 top-[25px] h-px w-6 bg-paper transition-transform ${open ? "-translate-y-[4px] -rotate-45" : ""}`} />
         </button>
-      </header>
+      </div>
 
-      {/* Mobile menu overlay */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-surface pt-20 flex flex-col px-6 md:hidden">
-          <nav className="flex flex-col border-t border-outline-variant mt-4">
-            {["work", "services", "contact"].map((item) => (
-              <a
-                key={item}
-                href={hrefFor(item)}
-                onClick={() => setMenuOpen(false)}
-                className="font-[family-name:var(--font-ibm-plex-sans)] text-[14px] uppercase tracking-[0.05em] text-on-surface py-5 border-b border-outline-variant hover:text-primary transition-colors"
-              >
-                {item}
-              </a>
+      {open && (
+        <div id="mobile-navigation" className="fixed inset-x-0 top-[72px] min-h-[calc(100dvh-72px)] border-t border-line bg-ink px-4 pb-8 lg:hidden">
+          <nav aria-label="Mobile navigation" className="divide-y divide-line">
+            {copy.links.map((link, index) => (
+              <Link key={link.href + link.label} href={link.href} onClick={() => setOpen(false)} className="flex min-h-16 items-center justify-between py-4 text-2xl tracking-[-.03em]">
+                {link.label}<span className="label text-muted">0{index + 1}</span>
+              </Link>
             ))}
-            <Link
-              href="/projects"
-              onClick={() => setMenuOpen(false)}
-              className="font-[family-name:var(--font-ibm-plex-sans)] text-[14px] uppercase tracking-[0.05em] text-on-surface py-5 border-b border-outline-variant hover:text-primary transition-colors"
-            >
-              Projects
-            </Link>
-            <Link
-              href="/hire"
-              onClick={() => setMenuOpen(false)}
-              className="font-[family-name:var(--font-ibm-plex-sans)] text-[14px] uppercase tracking-[0.05em] text-on-surface py-5 border-b border-outline-variant hover:text-primary transition-colors"
-            >
-              Hire
-            </Link>
           </nav>
-
-          <div className="mt-8 flex flex-col gap-5">
-            {siteConfig.availability.available && (
-              <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-scale-pulse flex-shrink-0" />
-                <span className="font-[family-name:var(--font-ibm-plex-sans)] text-[11px] uppercase tracking-[0.08em] text-secondary">
-                  {siteConfig.availability.label}
-                </span>
-              </div>
-            )}
-            <a
-              href={siteConfig.links.calendly}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-primary text-on-primary font-[family-name:var(--font-ibm-plex-sans)] text-[11px] uppercase tracking-[0.12em] px-5 py-4 text-center hover:opacity-90 transition-opacity"
-            >
-              Schedule a Call
-            </a>
-            <a
-              href="#contact"
-              onClick={() => setMenuOpen(false)}
-              className="border border-primary text-primary font-[family-name:var(--font-ibm-plex-sans)] text-[11px] uppercase tracking-[0.12em] px-5 py-4 text-center hover:bg-surface-container-high transition-colors"
-            >
-              Send a Brief
-            </a>
+          <div className="mt-8 grid gap-3">
+            <Link href="/#contact" onClick={() => setOpen(false)} className="bg-signal px-6 py-4 text-center text-sm font-semibold uppercase tracking-[.1em] text-ink">{copy.primaryCta}</Link>
+            <a href={calendly} target="_blank" rel="noopener noreferrer" className="border border-line px-6 py-4 text-center text-sm uppercase tracking-[.1em]">{copy.secondaryCta}</a>
           </div>
+          <p className="label mt-8 flex items-center gap-2 text-muted"><i className="h-1.5 w-1.5 rounded-full bg-signal" />{availabilityLabel}</p>
         </div>
       )}
-    </>
+    </header>
   );
 }

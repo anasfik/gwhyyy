@@ -10,8 +10,8 @@ data/
 
 # Environment files (injected at runtime)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
 # Dev tools
 .git

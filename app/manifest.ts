@@ -1,15 +1,18 @@
 import type { MetadataRoute } from "next";
-import siteConfig from "@/config/site.json";
+import { getSiteContent } from "@/lib/site-content";
+
+export const dynamic = "force-dynamic";
 
 export default function manifest(): MetadataRoute.Manifest {
+  const siteConfig = getSiteContent();
   return {
     name: `${siteConfig.personal.name} — GWHYYY`,
     short_name: "GWHYYY",
     description: siteConfig.seo.description,
     start_url: "/",
     display: "standalone",
-    background_color: "#f9f9f9",
-    theme_color: "#000000",
+    background_color: "#0a0c0b",
+    theme_color: "#0a0c0b",
     lang: "en",
     scope: "/",
     icons: [

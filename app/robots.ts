@@ -1,7 +1,10 @@
 import { MetadataRoute } from "next";
-import siteConfig from "@/config/site.json";
+import { getSiteContent } from "@/lib/site-content";
+
+export const dynamic = "force-dynamic";
 
 export default function robots(): MetadataRoute.Robots {
+  const siteConfig = getSiteContent();
   const privatePaths = ["/dashboard/", "/login", "/api/"];
 
   return {

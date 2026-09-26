@@ -19,17 +19,17 @@ export default async function DashboardLayout({
 
   return (
     <SessionProvider session={session}>
-      <div className="flex h-screen w-full bg-surface overflow-hidden">
+      <div className="flex min-h-screen w-full bg-surface">
         <DashboardSidebar />
-        <div className="ml-64 flex-grow flex flex-col min-h-screen overflow-hidden">
-          {children}
-          {/* Status bar */}
-          <footer className="h-10 border-t border-outline-variant bg-surface-container-low px-[64px] flex items-center justify-between font-[family-name:var(--font-ibm-plex-mono)] text-[10px] text-secondary flex-shrink-0">
-            <div className="flex gap-6">
+        <div className="flex min-h-screen flex-1 flex-col overflow-hidden pt-14 lg:ml-64 lg:pt-0">
+          <div className="flex-1 overflow-hidden">{children}</div>
+          <footer className="flex h-10 flex-shrink-0 items-center justify-between border-t border-outline-variant bg-surface-container-low px-4 lg:px-16 font-mono text-[10px] text-secondary">
+            <div className="flex gap-4 lg:gap-6">
               <span>SYSTEM_STATUS: OK</span>
-              <span>DB: SQLITE</span>
+              <span className="hidden sm:inline">DB: SQLITE</span>
+              <span className="hidden md:inline">CONTENT: LIVE</span>
             </div>
-            <div className="uppercase">© {new Date().getFullYear()} GWHYYY · ADMIN_ACCESS_LEVEL: 01</div>
+            <div className="uppercase">© {new Date().getFullYear()} GWHYYY</div>
           </footer>
         </div>
       </div>

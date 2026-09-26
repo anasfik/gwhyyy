@@ -59,6 +59,20 @@ function initSchema(db: Database.Database) {
       window_start INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS site_content (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      document TEXT NOT NULL,
+      version INTEGER NOT NULL DEFAULT 1,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS site_content_revisions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      version INTEGER NOT NULL,
+      document TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status);
     CREATE INDEX IF NOT EXISTS idx_contacts_created ON contacts(created_at);
     CREATE INDEX IF NOT EXISTS idx_page_views_path ON page_views(path);
@@ -66,4 +80,10 @@ function initSchema(db: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_events_name ON events(name);
     CREATE INDEX IF NOT EXISTS idx_events_created ON events(created_at);
   `);
+
+  const columns = new Set((db.prepare("PRAGMA table_info(contacts)").all() as { name: string }[]).map((column) => column.name));
+  if (!columns.has("lead_stage")) db.exec("ALTER TABLE contacts ADD COLUMN lead_stage TEXT NOT NULL DEFAULT 'new'");
+  if (!columns.has("notes")) db.exec("ALTER TABLE contacts ADD COLUMN notes TEXT NOT NULL DEFAULT ''");
+  if (!columns.has("follow_up_at")) db.exec("ALTER TABLE contacts ADD COLUMN follow_up_at TEXT");
+  if (!columns.has("updated_at")) db.exec("ALTER TABLE contacts ADD COLUMN updated_at TEXT");
 }

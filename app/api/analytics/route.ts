@@ -17,16 +17,26 @@ export async function GET() {
   const views7d = (db.prepare(
     "SELECT COUNT(*) as c FROM page_views WHERE created_at >= datetime('now', '-7 days')"
   ).get() as CountRow).c;
+  const views30d = (db.prepare(
+    "SELECT COUNT(*) as c FROM page_views WHERE created_at >= datetime('now', '-30 days')"
+  ).get() as CountRow).c;
   const totalContacts = (db.prepare("SELECT COUNT(*) as c FROM contacts").get() as CountRow).c;
   const unreadContacts = (db.prepare("SELECT COUNT(*) as c FROM contacts WHERE status = 'unread'").get() as CountRow).c;
+  const leads30d = (db.prepare("SELECT COUNT(*) as c FROM contacts WHERE created_at >= datetime('now', '-30 days')").get() as CountRow).c;
+  const pipeline = db.prepare("SELECT lead_stage as stage, COUNT(*) as count FROM contacts GROUP BY lead_stage").all() as { stage: string; count: number }[];
 
-  const dailyViews = db.prepare(`
+  const rawDays = db.prepare(`
     SELECT date(created_at) as day, COUNT(*) as count
     FROM page_views
     WHERE created_at >= datetime('now', '-14 days')
     GROUP BY date(created_at)
-    ORDER BY day ASC
   `).all() as DayRow[];
+  const byDay = new Map(rawDays.map((d) => [d.day, d.count]));
+  const dailyViews: DayRow[] = [];
+  for (let i = 13; i >= 0; i--) {
+    const day = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+    dailyViews.push({ day, count: byDay.get(day) ?? 0 });
+  }
 
   const topPages = db.prepare(`
     SELECT path, COUNT(*) as count
@@ -47,8 +57,12 @@ export async function GET() {
   return NextResponse.json({
     totalViews,
     views7d,
+    views30d,
     totalContacts,
     unreadContacts,
+    leads30d,
+    conversion30d: views30d ? Math.round((leads30d / views30d) * 1000) / 10 : 0,
+    pipeline,
     dailyViews,
     topPages,
     topEvents,

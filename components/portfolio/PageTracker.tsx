@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 function track(payload: Record<string, unknown>) {
+  if (navigator.doNotTrack === "1") return;
   fetch("/api/track", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -29,10 +30,18 @@ export default function PageTracker() {
       const anchor = el.closest("a") as HTMLAnchorElement | null;
       if (!anchor) return;
       const href = anchor.getAttribute("href") ?? "";
-      if (href.startsWith("/#contact")) {
-        track({ path: pathname, event: "cta_contact_click", referrer: "" });
-      } else if (href.includes("calendly.com")) {
-        track({ path: pathname, event: "cta_calendly_click", referrer: "" });
+       if (href === "#contact" || href.startsWith("/#contact")) {
+         track({ path: pathname, event: "cta_contact_click", referrer: "" });
+       } else if (href.includes("calendly.com")) {
+         track({ path: pathname, event: "cta_calendly_click", referrer: "" });
+       } else if (href.startsWith("mailto:")) {
+         track({ path: pathname, event: "email_click", referrer: "" });
+       } else if (href === "/resume") {
+         track({ path: pathname, event: "resume_view", referrer: "" });
+       } else if (href.includes("github.com")) {
+         track({ path: pathname, event: "github_click", referrer: "" });
+       } else if (href.includes("linkedin.com")) {
+         track({ path: pathname, event: "linkedin_click", referrer: "" });
       } else if (/^https?:\/\//.test(href)) {
         track({ path: pathname, event: `outbound:${hostnameOf(href)}`, referrer: "" });
       }

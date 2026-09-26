@@ -1,92 +1,65 @@
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { getIp, isRateLimited } from "@/lib/rate-limit";
-import crypto from "crypto";
+import { getSiteContent } from "@/lib/site-content";
 
-// Honeypot + time-trap: bots fill hidden fields and submit instantly.
-function looksLikeBot(body: Record<string, string>, elapsedMs: number): boolean {
-  return Boolean(body.website) || elapsedMs < 2000;
+function stringField(value: unknown, max: number) {
+  return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
-async function notifyByEmail(lead: { name: string; email: string; subject: string; budget: string; message: string }) {
+async function notifyByEmail(lead: { name: string; email: string; subject: string; budget: string; message: string }, fallbackEmail: string) {
   const key = process.env.RESEND_API_KEY;
-  if (!key) return; // optional — set RESEND_API_KEY to get email alerts
-
-  await fetch("https://api.resend.com/emails", {
+  if (!key) return;
+  const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from: process.env.CONTACT_FROM_EMAIL ?? "onboarding@resend.dev",
-      to: [process.env.CONTACT_TO_EMAIL ?? "work@gwhyyy.com"],
+      to: [process.env.CONTACT_TO_EMAIL ?? fallbackEmail],
       subject: `New lead: ${lead.subject || lead.name}`,
-      text: `From: ${lead.name} <${lead.email}>\nBudget: ${lead.budget || "—"}\n\n${lead.message}`,
+      text: `From: ${lead.name} <${lead.email}>\nBudget: ${lead.budget || "Not specified"}\n\n${lead.message}`,
     }),
-  }).catch(() => {});
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) throw new Error(`Resend returned ${response.status}`);
 }
 
 export async function POST(req: NextRequest) {
-  const db = getDb();
+  if (!req.headers.get("content-type")?.startsWith("application/json")) return NextResponse.json({ error: "JSON required" }, { status: 415 });
+  const siteConfig = getSiteContent();
+  const budgets = new Set<string>(siteConfig.budgetOptions);
   const ip = getIp(req);
-  if (isRateLimited(db, `contact:${ip}`)) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
+  const db = getDb();
+  if (isRateLimited(db, `contact:${crypto.createHash("sha256").update(ip).digest("hex")}`)) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
-  let body: Record<string, string>;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+  let raw: unknown;
+  try { raw = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  const body = raw as Record<string, unknown>;
+  const submittedAt = Number(body.submittedAt);
+  if (stringField(body.website, 200) || !Number.isFinite(submittedAt) || Date.now() - submittedAt < 2000) return NextResponse.json({ ok: true }, { status: 201 });
 
-  // Bot check before any DB writes. Same 200 as success so bots learn nothing.
-  const submittedAt = Number(body.submittedAt ?? 0);
-  if (looksLikeBot(body, Date.now() - submittedAt)) {
-    return NextResponse.json({ ok: true }, { status: 200 });
-  }
-
-  const { name, email, subject, budget, message } = body;
-
-  if (!name?.trim() || !email?.trim() || !message?.trim()) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return NextResponse.json({ error: "Invalid email" }, { status: 400 });
-  }
-
-  const ipHash = crypto.createHash("sha256").update(ip).digest("hex").slice(0, 16);
+  const lead = {
+    name: stringField(body.name, 200),
+    email: stringField(body.email, 200).toLowerCase(),
+    subject: stringField(body.subject, 300),
+    budget: stringField(body.budget, 100),
+    message: stringField(body.message, 5000),
+  };
+  if (!lead.name || !lead.email || !lead.message) return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email)) return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+  if (lead.budget && !budgets.has(lead.budget)) return NextResponse.json({ error: "Invalid budget" }, { status: 400 });
 
   try {
-    const stmt = db.prepare(
-      `INSERT INTO contacts (name, email, subject, budget, message, ip_hash)
-       VALUES (?, ?, ?, ?, ?, ?)`
+    const result = db.prepare("INSERT INTO contacts (name, email, subject, budget, message, ip_hash) VALUES (?, ?, ?, ?, ?, ?)").run(
+      lead.name, lead.email, lead.subject, lead.budget, lead.message, crypto.createHash("sha256").update(ip).digest("hex").slice(0, 16),
     );
-    const lead = {
-      name: name.trim().slice(0, 200),
-      email: email.trim().slice(0, 200),
-      subject: (subject ?? "").trim().slice(0, 300),
-      budget: (budget ?? "").trim().slice(0, 100),
-      message: message.trim().slice(0, 5000),
-    };
-    const result = stmt.run(
-      lead.name,
-      lead.email,
-      lead.subject,
-      lead.budget,
-      lead.message,
-      ipHash
-    );
-    db.prepare(
-      "INSERT INTO events (name, path, referrer) VALUES ('contact_submit', '/#contact', '')"
-    ).run();
-    notifyByEmail(lead); // fire-and-forget, never blocks the response
+    db.prepare("INSERT INTO events (name, path, referrer) VALUES ('contact_submit', '/#contact', '')").run();
+    await notifyByEmail(lead, siteConfig.personal.email).catch((error) => console.error("Contact notification failed:", error));
     return NextResponse.json({ ok: true, id: result.lastInsertRowid }, { status: 201 });
-  } catch (err) {
-    console.error("DB error:", err);
+  } catch (error) {
+    console.error("Contact submission failed:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

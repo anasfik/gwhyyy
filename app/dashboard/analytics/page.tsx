@@ -5,8 +5,12 @@ import { useEffect, useState } from "react";
 type Stats = {
   totalViews: number;
   views7d: number;
+  views30d: number;
   totalContacts: number;
   unreadContacts: number;
+  leads30d: number;
+  conversion30d: number;
+  pipeline: { stage: string; count: number }[];
   dailyViews: { day: string; count: number }[];
   topPages: { path: string; count: number }[];
   topEvents?: { name: string; count: number }[];
@@ -15,136 +19,86 @@ type Stats = {
 export default function AnalyticsPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/analytics")
-      .then((r) => r.json())
-      .then((d) => { setStats(d); setLoading(false); });
+    fetch("/api/analytics", { cache: "no-store" })
+      .then(async (r) => { if (!r.ok) throw new Error(`Analytics failed (${r.status})`); return r.json(); })
+      .then((d) => { setStats(d); setLoading(false); })
+      .catch((e) => { setError(e instanceof Error ? e.message : "Load failed"); setLoading(false); });
   }, []);
 
-  const maxViews = stats?.dailyViews.length
-    ? Math.max(...stats.dailyViews.map((d) => d.count), 1)
-    : 1;
+  const maxViews = stats?.dailyViews.length ? Math.max(...stats.dailyViews.map((d) => d.count), 1) : 1;
 
   return (
-    <div className="flex flex-col flex-grow overflow-hidden">
-      <header className="h-20 flex items-center px-[64px] bg-surface border-b border-outline-variant flex-shrink-0">
-        <h1 className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-bold tracking-[-0.02em] text-primary">
-          ANALYTICS_02
-        </h1>
+    <div className="flex h-full flex-col overflow-hidden">
+      <header className="flex flex-shrink-0 items-center justify-between border-b border-outline-variant px-4 py-4 lg:px-12">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-secondary">Acquisition / Usage metrics</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight">ANALYTICS</h1>
+        </div>
       </header>
 
-      <section className="flex-grow overflow-y-auto p-12">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="mb-8 border-b border-outline-variant pb-4">
-            <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] text-secondary uppercase tracking-[0.15em]">
-              Site Performance / Usage Metrics
-            </span>
-            <h2 className="font-[family-name:var(--font-ibm-plex-sans)] text-[32px] font-semibold mt-1">
-              Overview
-            </h2>
-          </div>
-
-          {loading ? (
-            <div className="py-16 text-center font-[family-name:var(--font-ibm-plex-mono)] text-[12px] text-secondary uppercase">Loading...</div>
-          ) : (
+      <section className="flex-1 overflow-y-auto p-4 lg:p-8">
+        <div className="mx-auto max-w-[1200px]">
+          {loading ? <p className="py-16 text-center font-mono text-xs uppercase text-secondary">Loading…</p> : error ? <p role="alert" className="border border-error px-4 py-3 text-sm text-error">{error}</p> : stats && (
             <>
-              {/* Stats cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+              <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
                 {[
-                  { label: "Total Page Views", value: stats!.totalViews, sub: "All time" },
-                  { label: "Views (7 days)", value: stats!.views7d, sub: "Last 7 days" },
-                  { label: "Contact Forms", value: stats!.totalContacts, sub: "Total submissions" },
-                  { label: "Unread Messages", value: stats!.unreadContacts, sub: "Awaiting review" },
+                  { label: "Views · 7 days", value: stats.views7d, sub: "Short-term demand" },
+                  { label: "Views · 30 days", value: stats.views30d, sub: "Discovery reach" },
+                  { label: "Leads · 30 days", value: stats.leads30d, sub: `${stats.conversion30d}% visitor → lead` },
+                  { label: "Total views", value: stats.totalViews, sub: "All time" },
+                  { label: "Total leads", value: stats.totalContacts, sub: "Pipeline entries" },
+                  { label: "Unread leads", value: stats.unreadContacts, sub: "Needs reply" },
                 ].map((card) => (
-                  <div key={card.label} className="border border-outline-variant p-6 bg-surface">
-                    <div className="font-[family-name:var(--font-ibm-plex-sans)] text-[11px] uppercase tracking-[0.05em] text-secondary mb-3">
-                      {card.label}
-                    </div>
-                    <div className="font-[family-name:var(--font-ibm-plex-sans)] text-[40px] font-semibold tracking-[-0.02em] leading-none mb-2">
-                      {card.value}
-                    </div>
-                    <div className="font-[family-name:var(--font-ibm-plex-mono)] text-[11px] text-secondary">
-                      {card.sub}
-                    </div>
+                  <div key={card.label} className="border border-outline-variant bg-surface p-5">
+                    <div className="mb-2 text-[11px] uppercase tracking-widest text-secondary">{card.label}</div>
+                    <div className="text-4xl font-semibold leading-none">{card.value}</div>
+                    <div className="mt-2 font-mono text-[11px] text-secondary">{card.sub}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Daily views chart */}
-              <div className="border border-outline-variant p-8 bg-surface mb-8">
-                <div className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] text-secondary mb-6">
-                  Daily Page Views — Last 14 Days
+              <div className="mb-8 border border-outline-variant bg-surface p-5 lg:p-8">
+                <div className="mb-6 text-[12px] uppercase tracking-widest text-secondary">Daily views · last 14 days (zeros included)</div>
+                <div className="flex h-32 items-end gap-1 lg:gap-2">
+                  {stats.dailyViews.map((d) => (
+                    <div key={d.day} className="flex flex-1 flex-col items-center gap-1">
+                      <div className="w-full bg-primary" style={{ height: `${(d.count / maxViews) * 100}%`, minHeight: d.count ? "4px" : "2px", opacity: d.count ? 1 : 0.25 }} title={`${d.day}: ${d.count}`} />
+                      <span className="hidden font-mono text-[9px] text-secondary md:block">{d.day.slice(5)}</span>
+                    </div>
+                  ))}
                 </div>
-                {stats!.dailyViews.length === 0 ? (
-                  <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[12px] text-secondary uppercase">No data yet.</p>
-                ) : (
-                  <div className="flex items-end gap-2 h-32">
-                    {stats!.dailyViews.map((d) => (
-                      <div key={d.day} className="flex flex-col items-center gap-1 flex-1">
-                        <div
-                          className="w-full bg-primary transition-all"
-                          style={{ height: `${(d.count / maxViews) * 100}%`, minHeight: "2px" }}
-                          title={`${d.day}: ${d.count} views`}
-                        />
-                        <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[9px] text-secondary rotate-90 md:rotate-0 whitespace-nowrap overflow-hidden">
-                          {d.day.slice(5)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
-              {/* Top events (CTA clicks, outbound, form submits) */}
-              {stats!.topEvents && stats!.topEvents.length > 0 && (
-                <div className="border border-outline-variant bg-surface mb-8">
-                  <div className="px-6 py-4 border-b border-outline-variant">
-                    <span className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] text-secondary">
-                      Top Events — Last 30 Days
-                    </span>
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className="border border-outline-variant bg-surface">
+                  <div className="border-b border-outline-variant px-6 py-4 text-[12px] uppercase tracking-widest text-secondary">Top events · 30 days</div>
+                  {stats.topEvents?.length ? (
+                    <table className="w-full"><tbody className="divide-y divide-outline-variant">
+                      {stats.topEvents.map((e) => <tr key={e.name}><td className="px-6 py-3 font-mono text-[13px]">{e.name}</td><td className="px-6 py-3 text-right font-medium">{e.count}</td></tr>)}
+                    </tbody></table>
+                  ) : <p className="p-6 font-mono text-xs uppercase text-secondary">No events yet.</p>}
+                </div>
+                <div className="border border-outline-variant bg-surface">
+                  <div className="border-b border-outline-variant px-6 py-4 text-[12px] uppercase tracking-widest text-secondary">Top pages · 30 days</div>
+                  {stats.topPages.length ? (
+                    <table className="w-full"><tbody className="divide-y divide-outline-variant">
+                      {stats.topPages.map((p) => <tr key={p.path}><td className="px-6 py-3 font-mono text-[13px]">{p.path}</td><td className="px-6 py-3 text-right font-medium">{p.count}</td></tr>)}
+                    </tbody></table>
+                  ) : <p className="p-6 font-mono text-xs uppercase text-secondary">No page data yet.</p>}
+                </div>
+              </div>
+
+              {stats.pipeline.length > 0 && (
+                <div className="mt-6 border border-outline-variant bg-surface p-5 lg:p-8">
+                  <div className="mb-4 text-[12px] uppercase tracking-widest text-secondary">Lead pipeline distribution</div>
+                  <div className="flex flex-wrap gap-2">
+                    {stats.pipeline.map((row) => <span key={row.stage} className="border border-outline-variant px-4 py-2 font-mono text-xs uppercase">{row.stage}: {row.count}</span>)}
                   </div>
-                  <table className="w-full">
-                    <tbody className="divide-y divide-outline-variant">
-                      {stats!.topEvents.map((e) => (
-                        <tr key={e.name} className="hover:bg-surface-container-high transition-colors">
-                          <td className="py-4 px-6 font-[family-name:var(--font-ibm-plex-mono)] text-[13px]">{e.name}</td>
-                          <td className="py-4 px-6 text-right font-[family-name:var(--font-ibm-plex-sans)] text-[16px] font-medium">{e.count}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
                 </div>
               )}
-
-              {/* Top pages */}
-              <div className="border border-outline-variant bg-surface">
-                <div className="px-6 py-4 border-b border-outline-variant">
-                  <span className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] text-secondary">
-                    Top Pages — Last 30 Days
-                  </span>
-                </div>
-                {stats!.topPages.length === 0 ? (
-                  <p className="p-6 font-[family-name:var(--font-ibm-plex-mono)] text-[12px] text-secondary uppercase">No data yet.</p>
-                ) : (
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-outline-variant bg-surface-container-low">
-                        <th className="text-left py-3 px-6 font-[family-name:var(--font-ibm-plex-mono)] text-[11px] uppercase text-secondary">Path</th>
-                        <th className="text-right py-3 px-6 font-[family-name:var(--font-ibm-plex-mono)] text-[11px] uppercase text-secondary">Views</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-outline-variant">
-                      {stats!.topPages.map((p) => (
-                        <tr key={p.path} className="hover:bg-surface-container-high transition-colors">
-                          <td className="py-4 px-6 font-[family-name:var(--font-ibm-plex-mono)] text-[13px]">{p.path}</td>
-                          <td className="py-4 px-6 text-right font-[family-name:var(--font-ibm-plex-sans)] text-[16px] font-medium">{p.count}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
             </>
           )}
         </div>

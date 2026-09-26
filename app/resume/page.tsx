@@ -1,84 +1,27 @@
 import type { Metadata } from "next";
-import siteConfig from "@/config/site.json";
+import Link from "next/link";
+import PrintButton from "@/components/portfolio/PrintButton";
+import { getProjects, getSiteContent } from "@/lib/site-content";
 
-export const metadata: Metadata = {
-  title: "Resume — Flutter Developer & AI Engineer",
-  description: `Resume of ${siteConfig.personal.name}: Flutter development, AI systems, RAG pipelines, SDK engineering, and selected production experience.`,
-  alternates: { canonical: `${siteConfig.seo.url}/resume` },
-};
+export const dynamic = "force-dynamic";
+
+export function generateMetadata(): Metadata {
+  const { personal, seo } = getSiteContent();
+  return { title: `Resume — ${personal.title}`, description: `Resume of ${personal.name}, ${personal.title}.`, alternates: { canonical: `${seo.url}/resume` } };
+}
 
 export default function ResumePage() {
-  const projects = siteConfig.projects
-    .filter((project) => project.visible)
-    .sort((a, b) => a.order - b.order);
-
-  return (
-    <main className="max-w-[900px] mx-auto px-6 py-16 md:py-24 text-on-surface">
-      <header className="border-b border-outline-variant pb-10 mb-12">
-        <p className="font-[family-name:var(--font-ibm-plex-mono)] text-sm uppercase tracking-wider mb-4">
-          Resume · Available for remote contract work
-        </p>
-        <h1 className="font-[family-name:var(--font-ibm-plex-sans)] text-4xl md:text-6xl font-semibold leading-tight">
-          {siteConfig.personal.name} — Flutter Developer &amp; AI Engineer
-        </h1>
-        <p className="text-lg text-secondary leading-relaxed mt-6 max-w-3xl">
-          {siteConfig.seo.description}
-        </p>
-        <address className="not-italic flex flex-wrap gap-x-6 gap-y-2 mt-6 text-sm">
-          <span>{siteConfig.personal.location}</span>
-          <a className="underline" href={siteConfig.links.email}>{siteConfig.personal.email}</a>
-          <a className="underline" href={siteConfig.links.github}>GitHub</a>
-          <a className="underline" href={siteConfig.links.linkedin}>LinkedIn</a>
-        </address>
-      </header>
-
-      <section className="mb-14" aria-labelledby="capabilities-heading">
-        <h2 id="capabilities-heading" className="text-3xl font-semibold mb-7">Core Technical Capabilities</h2>
-        <div className="space-y-8">
-          {siteConfig.services.map((service) => (
-            <article key={service.id}>
-              <h3 className="text-xl font-semibold">{service.title}</h3>
-              <p className="text-secondary leading-relaxed mt-2">{service.description}</p>
-              <ul className="list-disc pl-5 mt-3 space-y-1">
-                {service.bullets.map((bullet) => <li key={bullet}>{bullet.replace(/^\+\s*/, "")}</li>)}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-14" aria-labelledby="experience-heading">
-        <h2 id="experience-heading" className="text-3xl font-semibold mb-7">Professional Experience</h2>
-        <div className="space-y-9">
-          {siteConfig.experience.map((experience) => (
-            <article key={experience.id}>
-              <h3 className="text-xl font-semibold">{experience.role} — {experience.company}</h3>
-              <p className="text-sm text-secondary mt-1">{experience.period} · {experience.type}</p>
-              <p className="leading-relaxed mt-3">{experience.impact}</p>
-              <p className="text-sm mt-2"><strong>Technologies:</strong> {experience.stack.join(", ")}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-14" aria-labelledby="projects-heading">
-        <h2 id="projects-heading" className="text-3xl font-semibold mb-7">Selected Projects &amp; Open Source</h2>
-        <div className="space-y-8">
-          {projects.map((project) => (
-            <article key={project.id}>
-              <h3 className="text-xl font-semibold"><a className="underline" href={project.url}>{project.title}</a></h3>
-              <p className="text-sm text-secondary mt-1">{project.category} · {project.tags.join(", ")}</p>
-              <p className="leading-relaxed mt-2">{project.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="border-t border-outline-variant pt-10" aria-labelledby="contact-heading">
-        <h2 id="contact-heading" className="text-3xl font-semibold">Project Inquiries</h2>
-        <p className="mt-4 leading-relaxed">For Flutter, AI systems, RAG, SDK, or technical consulting work, email <a className="underline" href={siteConfig.links.email}>{siteConfig.personal.email}</a> or <a className="underline" href={siteConfig.links.calendly}>schedule a 30-minute call</a>.</p>
-        <p className="mt-6 text-sm"><a className="underline" href="/">Return to portfolio</a> · <a className="underline" href="/llms.md">Markdown version</a> · <a className="underline" href="/profile.json">JSON profile</a></p>
-      </section>
-    </main>
-  );
+  const { personal, links, capabilities, stackGroups, experience, copy } = getSiteContent();
+  const text = copy.resume;
+  const projects = getProjects(getSiteContent());
+  return <main id="main" className="mx-auto max-w-[920px] bg-ink px-5 py-10 md:px-10 md:py-16 print:max-w-none print:bg-white print:p-0">
+    <div className="no-print mb-10 flex items-center justify-between"><Link href="/" className="text-sm text-muted hover:text-paper">← {copy.brand.name}</Link><PrintButton /></div>
+    <header className="border-b border-line pb-9"><p className="label text-signal">{text.eyebrow}</p><h1 className="mt-4 text-4xl font-semibold tracking-[-.055em] md:text-6xl">{personal.name}</h1><p className="mt-3 text-xl">{personal.title}</p><p className="mt-5 max-w-3xl leading-7 text-muted">{personal.bio}</p><address className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm not-italic"><span>{personal.location}</span><a href={links.email}>{personal.email}</a><a href={links.github}>GitHub</a><a href={links.linkedin}>LinkedIn</a></address></header>
+    <ResumeSection title={text.sectionExperience}>{experience.map((item) => <article key={item.id} className="mb-8 break-inside-avoid"><div className="flex flex-wrap items-baseline justify-between gap-2"><h3 className="text-xl font-semibold">{item.role}, {item.company}</h3><p className="font-mono text-xs text-muted">{item.period} / {item.type}</p></div><p className="mt-3 leading-7 text-muted">{item.scope}</p><p className="mt-2 text-sm">{item.stack.join(" · ")}</p></article>)}</ResumeSection>
+    <ResumeSection title={text.sectionProjects}>{projects.map((project) => <article key={project.slug} className="mb-6 break-inside-avoid"><div className="flex flex-wrap items-baseline justify-between gap-2"><h3 className="text-lg font-semibold"><a href={project.link}>{project.name}</a></h3><p className="text-sm text-signal">{project.signal}</p></div><p className="mt-2 leading-6 text-muted">{project.summary}</p><p className="mt-2 text-sm">{project.stack.join(" · ")}</p></article>)}</ResumeSection>
+    <ResumeSection title={text.sectionCapabilities}><div className="grid gap-6 sm:grid-cols-2">{capabilities.map((item) => <article key={item.title} className="break-inside-avoid"><h3 className="font-semibold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-muted">{item.summary}</p><p className="mt-2 text-sm">{item.outcomes.join(" · ")}</p></article>)}</div></ResumeSection>
+    <ResumeSection title={text.sectionStack}><div className="grid gap-4 sm:grid-cols-2">{stackGroups.map((group) => <p key={group.label} className="text-sm"><strong>{group.label}:</strong> {group.items.join(", ")}</p>)}</div></ResumeSection>
+  </main>;
 }
+
+function ResumeSection({ title, children }: { title: string; children: React.ReactNode }) { return <section className="border-b border-line py-9 last:border-0" aria-labelledby={`${title.toLowerCase().replace(/ /g, "-")}-heading`}><h2 id={`${title.toLowerCase().replace(/ /g, "-")}-heading`} className="label mb-7 text-signal">{title}</h2>{children}</section>; }

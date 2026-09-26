@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, Suspense } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard/messages";
+  const requestedCallback = searchParams.get("callbackUrl");
+  const callbackUrl = requestedCallback?.startsWith("/dashboard") ? requestedCallback : "/dashboard/messages";
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,7 +28,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center px-6">
+    <main id="main" className="min-h-dvh bg-surface flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="mb-12">
           <div className="font-[family-name:var(--font-ibm-plex-sans)] text-[24px] font-bold tracking-[-0.03em] text-primary mb-2">
@@ -38,21 +40,22 @@ function LoginForm() {
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <label className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] text-secondary">
+            <label htmlFor="admin-password" className="font-sans text-[12px] uppercase tracking-[0.05em] text-secondary">
               Password
             </label>
             <input
               type="password"
+              id="admin-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               autoFocus
-              className="border border-outline-variant bg-transparent p-4 focus:outline-none focus:border-primary font-[family-name:var(--font-inter)] text-[16px] transition-colors"
+              className="border border-outline-variant bg-transparent p-4 focus:border-signal font-sans text-[16px] transition-colors"
               placeholder="Enter password"
             />
           </div>
           {error && (
-            <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[12px] text-error uppercase tracking-[0.05em]">
+            <p role="alert" className="font-mono text-[12px] text-error uppercase tracking-[0.05em]">
               ACCESS_DENIED: Invalid credentials.
             </p>
           )}
@@ -65,12 +68,12 @@ function LoginForm() {
           </button>
         </form>
         <div className="mt-8 border-t border-outline-variant pt-6">
-          <a href="/" className="font-[family-name:var(--font-ibm-plex-sans)] text-[12px] uppercase tracking-[0.05em] text-secondary hover:text-primary transition-colors">
+          <Link href="/" className="font-sans text-[12px] uppercase tracking-[0.05em] text-secondary hover:text-primary transition-colors">
             ← Back to Portfolio
-          </a>
+          </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

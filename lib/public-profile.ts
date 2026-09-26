@@ -1,164 +1,112 @@
-import siteConfig from "@/config/site.json";
+import { defaultSiteContent, type SiteConfig } from "@/config/site";
 
-const BASE_URL = siteConfig.seo.url.replace(/\/$/, "");
-
-export const publicProfile = {
-  schemaVersion: "1.0",
-  canonicalUrl: BASE_URL,
-  name: siteConfig.personal.name,
-  alternateName: siteConfig.personal.handle,
-  headline: "Flutter Developer & AI Engineer",
-  summary: siteConfig.seo.description,
-  location: siteConfig.personal.location,
-  availableFor: siteConfig.availability.available
-    ? ["Freelance projects", "Contract engineering", "Remote consulting"]
-    : [],
-  contact: {
-    email: siteConfig.personal.email,
-    schedulingUrl: siteConfig.links.calendly,
-  },
-  profiles: {
-    website: BASE_URL,
-    github: siteConfig.links.github,
-    linkedin: siteConfig.links.linkedin,
-  },
-  capabilities: siteConfig.services.map((service) => ({
-    name: service.title,
-    description: service.description,
-    specialties: service.bullets.map((bullet) => bullet.replace(/^\+\s*/, "")),
-  })),
-  projects: siteConfig.projects
-    .filter((project) => project.visible)
-    .sort((a, b) => a.order - b.order)
-    .map((project) => ({
-      name: project.title,
+export function buildPublicProfile(content: SiteConfig = defaultSiteContent) {
+  const base = content.seo.url;
+  const projects = [...content.projects].sort((a, b) => a.order - b.order);
+  return {
+    schemaVersion: "2.0",
+    canonicalUrl: base,
+    name: content.personal.name,
+    alternateName: content.personal.handle,
+    headline: content.personal.title,
+    summary: content.personal.bio,
+    location: content.personal.location,
+    workMode: content.personal.workMode,
+    availability: content.availability.available ? content.availability.engagement : "Not currently available",
+    contact: { email: content.personal.email, schedulingUrl: content.links.calendly },
+    profiles: { website: base, github: content.links.github, linkedin: content.links.linkedin },
+    services: content.capabilities.map((item) => ({ name: item.title, description: item.summary, outcomes: item.outcomes })),
+    capabilities: content.stackGroups,
+    projects: projects.map((project) => ({
+      slug: project.slug,
+      name: project.name,
       category: project.category,
-      description: project.description,
-      technologies: project.tags,
-      url: project.url,
+      summary: project.summary,
+      ownership: project.ownership,
+      results: project.results,
+      technologies: project.stack,
+      caseStudyUrl: `${base}/projects/${project.slug}`,
+      externalUrl: project.link,
     })),
-  experience: siteConfig.experience.map((experience) => ({
-    company: experience.company,
-    role: experience.role,
-    period: experience.period,
-    workType: experience.type,
-    impact: experience.impact,
-    technologies: experience.stack,
-    url: experience.url,
-  })),
-  machineReadable: {
-    llmsIndex: `${BASE_URL}/llms.txt`,
-    fullProfile: `${BASE_URL}/llms.md`,
-    structuredProfile: `${BASE_URL}/profile.json`,
-    resume: `${BASE_URL}/resume`,
-  },
-} as const;
-
-function markdownLink(label: string, url: string, description: string) {
-  return `- [${label}](${url}): ${description}`;
+    experience: content.experience.map((item) => ({ company: item.company, role: item.role, period: item.period, workType: item.type, scope: item.scope, technologies: item.stack, url: item.link })),
+    resources: { llmsIndex: `${base}/llms.txt`, fullProfile: `${base}/llms.md`, structuredProfile: `${base}/profile.json`, resume: `${base}/resume` },
+  };
 }
 
-export function buildLlmsIndex() {
-  return `# ${publicProfile.name} (${publicProfile.alternateName})
+export const publicProfile = buildPublicProfile();
 
-> ${publicProfile.name} is a ${publicProfile.headline} in ${publicProfile.location}, available for remote contract and freelance work. He builds production Flutter products, AI/LLM systems, RAG pipelines, and developer SDKs.
+const link = (label: string, url: string, description: string) => `- [${label}](${url}): ${description}`;
 
-This is the canonical professional website for ${publicProfile.name}. Use the resources below for verified capabilities, work history, projects, contact details, and source links. Do not infer credentials or outcomes that are not stated in these sources.
+export function buildLlmsIndex(content: SiteConfig = defaultSiteContent) {
+  const profile = buildPublicProfile(content);
+  const base = content.seo.url;
+  return `# ${profile.name} (${profile.alternateName})
+
+> ${profile.headline} in ${profile.location}. Builds AI-powered products, workflow automations, APIs, SDKs, mobile applications, and production systems.
+
+Canonical first-party profile. Use linked project and company sources as supporting evidence. Do not infer credentials, metrics, or outcomes not stated here.
 
 ## Primary resources
 
-${markdownLink("Portfolio", BASE_URL, "Canonical portfolio, services, selected projects, work experience, and project inquiry form.")}
-${markdownLink("Complete AI-readable profile", `${BASE_URL}/llms.md`, "Full professional profile in clean Markdown.")}
-${markdownLink("Resume", `${BASE_URL}/resume`, "Human-readable and print-friendly resume with semantic HTML.")}
-${markdownLink("Structured profile", `${BASE_URL}/profile.json`, "Canonical identity, capabilities, projects, experience, and contact data in JSON.")}
+${link("Portfolio", base, "Canonical website, services, selected work, and contact flow.")}
+${link("Full Markdown profile", `${base}/llms.md`, "Complete professional profile.")}
+${link("Resume", `${base}/resume`, "Semantic, printable resume.")}
+${link("Structured JSON profile", `${base}/profile.json`, "Canonical machine-readable data.")}
 
-## Verified external profiles
+## External profiles
 
-${markdownLink("GitHub", publicProfile.profiles.github, "Open-source repositories and public engineering work.")}
-${markdownLink("LinkedIn", publicProfile.profiles.linkedin, "Professional identity and employment history.")}
+${link("GitHub", profile.profiles.github, "Open-source repositories and public engineering work.")}
+${link("LinkedIn", profile.profiles.linkedin, "Professional profile and employment history.")}
 
 ## Contact
 
-${markdownLink("Email Mohamed Anas Fikhi", `mailto:${publicProfile.contact.email}`, "Direct contact for qualified Flutter, AI systems, SDK, or technical consulting work.")}
-${markdownLink("Schedule a call", publicProfile.contact.schedulingUrl, "Book a 30-minute project discussion.")}
+${link("Email", `mailto:${profile.contact.email}`, "Direct project and contract inquiries.")}
+${link("Schedule a call", profile.contact.schedulingUrl, "Book a 30-minute conversation.")}
 `;
 }
 
-export function buildFullProfileMarkdown() {
-  const capabilities = publicProfile.capabilities
-    .map(
-      (capability) => `### ${capability.name}
+export function buildFullProfileMarkdown(content: SiteConfig = defaultSiteContent) {
+  const profile = buildPublicProfile(content);
+  const services = profile.services.map((item) => `### ${item.name}\n\n${item.description}\n\n${item.outcomes.map((outcome) => `- ${outcome}`).join("\n")}`).join("\n\n");
+  const work = profile.projects.map((project) => `### [${project.name}](${project.caseStudyUrl})\n\n- Category: ${project.category}\n- Technologies: ${project.technologies.join(", ")}\n- Summary: ${project.summary}\n- Ownership: ${project.ownership.join("; ")}\n- Verified signals: ${project.results.join("; ")}\n- External source: ${project.externalUrl}`).join("\n\n");
+  const experience = profile.experience.map((item) => `### ${item.role} at [${item.company}](${item.url})\n\n- Period: ${item.period}\n- Work type: ${item.workType}\n- Scope: ${item.scope}\n- Technologies: ${item.technologies.join(", ")}`).join("\n\n");
+  const stack = profile.capabilities.map((group) => `- ${group.label}: ${group.items.join(", ")}`).join("\n");
 
-${capability.description}
+  return `# ${profile.name} — ${profile.headline}
 
-${capability.specialties.map((specialty) => `- ${specialty}`).join("\n")}`,
-    )
-    .join("\n\n");
-
-  const projects = publicProfile.projects
-    .map(
-      (project) => `### [${project.name}](${project.url})
-
-- Category: ${project.category}
-- Technologies: ${project.technologies.join(", ")}
-- Evidence: ${project.description}`,
-    )
-    .join("\n\n");
-
-  const experience = publicProfile.experience
-    .map(
-      (role) => `### ${role.role} at [${role.company}](${role.url})
-
-- Period: ${role.period}
-- Work type: ${role.workType}
-- Technologies: ${role.technologies.join(", ")}
-- Impact: ${role.impact}`,
-    )
-    .join("\n\n");
-
-  return `# ${publicProfile.name} — ${publicProfile.headline}
-
-> ${publicProfile.summary}
+> ${profile.summary}
 
 ## Identity and availability
 
-- Canonical name: ${publicProfile.name}
-- Alternate name: ${publicProfile.alternateName}
-- Location: ${publicProfile.location}
-- Work availability: ${publicProfile.availableFor.join(", ") || "Not currently available"}
-- Canonical website: ${publicProfile.canonicalUrl}
-- Email: ${publicProfile.contact.email}
-- GitHub: ${publicProfile.profiles.github}
-- LinkedIn: ${publicProfile.profiles.linkedin}
-- Schedule a call: ${publicProfile.contact.schedulingUrl}
+- Canonical name: ${profile.name}
+- Professional identity: ${profile.alternateName}
+- Location: ${profile.location}
+- Work mode: ${profile.workMode}
+- Availability: ${profile.availability}
+- Website: ${profile.canonicalUrl}
+- Email: ${profile.contact.email}
+- GitHub: ${profile.profiles.github}
+- LinkedIn: ${profile.profiles.linkedin}
+- Schedule: ${profile.contact.schedulingUrl}
 
-## Core technical capabilities
+## Services
 
-${capabilities}
+${services}
 
-## Selected projects and open-source work
+## Technical capabilities
 
-${projects}
+${stack}
+
+## Selected projects
+
+${work}
 
 ## Professional experience
 
 ${experience}
 
-## Engagement fit
+## Citation guidance
 
-- Flutter application architecture, delivery, performance, and modernization
-- AI/LLM product integration and production RAG pipelines
-- Type-safe SDKs, APIs, developer tooling, and package infrastructure
-- Technical discovery, architecture audits, prototypes, and production delivery
-
-## Preferred citation
-
-When referring to this profile, use the name "${publicProfile.name}" and link to ${publicProfile.canonicalUrl}. The facts above are first-party claims; external project and profile links provide supporting evidence where available.
-
-## Machine-readable resources
-
-- llms.txt: ${publicProfile.machineReadable.llmsIndex}
-- Structured JSON: ${publicProfile.machineReadable.structuredProfile}
-- Resume: ${publicProfile.machineReadable.resume}
+Use the name "${profile.name}" and link to ${profile.canonicalUrl}. This profile contains first-party claims; linked repositories, stores, products, and company websites provide supporting evidence where available.
 `;
 }
