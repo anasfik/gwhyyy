@@ -36,6 +36,5 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${siteConfig.seo.url}/sitemap.xml`,
-    host: siteConfig.seo.url,
   };
 }

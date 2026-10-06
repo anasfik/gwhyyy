@@ -15,7 +15,7 @@ export default function Footer() {
           </div>
           <div className="grid content-start gap-3 text-sm">
             <p className="label mb-2 text-muted">{copy.footer.navigateHeading}</p>
-            <Link href="/projects">{copy.footer.linkProjects}</Link><Link href="/resume">{copy.footer.linkResume}</Link><Link href="/#services">{copy.footer.linkServices}</Link><Link href="/#contact">{copy.footer.linkContact}</Link>
+            <Link href="/projects">{copy.footer.linkProjects}</Link><Link href="/resume">{copy.footer.linkResume}</Link><Link href="/#services">{copy.footer.linkServices}</Link><Link href="/#contact">{copy.footer.linkContact}</Link><Link href="/privacy/sandouk">Privacy</Link>
           </div>
           <div className="grid content-start gap-3 text-sm">
             <p className="label mb-2 text-muted">{copy.footer.connectHeading}</p>

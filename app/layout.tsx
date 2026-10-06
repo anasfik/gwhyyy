@@ -35,7 +35,7 @@ export function generateMetadata(): Metadata {
     creator: personal.name,
     publisher: personal.name,
     referrer: "origin-when-cross-origin",
-    alternates: { canonical: seo.url, languages: { [copy.structured.language]: seo.url } },
+    alternates: { canonical: seo.url, languages: { [copy.structured.language]: seo.url, "x-default": seo.url } },
     openGraph: {
       type: "profile",
       locale: "en_US",
@@ -79,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         name: personal.name,
         alternateName: [personal.handle, ...copy.structured.alternateNames],
         url: seo.url,
+        image: `${seo.url}/opengraph-image`,
         email: personal.email,
         telephone: personal.phone,
         jobTitle: personal.title,

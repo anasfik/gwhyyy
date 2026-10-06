@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export function generateMetadata(): Metadata {
   const { personal, seo } = getSiteContent();
-  return { title: `Resume — ${personal.title}`, description: `Resume of ${personal.name}, ${personal.title}.`, alternates: { canonical: `${seo.url}/resume` } };
+  return { title: `Resume — ${personal.title}`, description: `Resume of ${personal.name}, ${personal.title}.`, alternates: { canonical: `${seo.url}/resume` }, openGraph: { url: `${seo.url}/resume`, title: `Resume — ${personal.name}`, description: `Resume of ${personal.name}, ${personal.title}.` } };
 }
 
 export default function ResumePage() {

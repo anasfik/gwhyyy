@@ -41,7 +41,7 @@ export default function Nav({ copy, brand, calendly, availabilityLabel }: { copy
                 key={link.href + link.label}
                 href={link.href}
                 aria-current={pathname === link.href ? "page" : undefined}
-                className="text-sm text-muted transition-colors duration-200 hover:text-paper"
+                className="inline-flex min-h-[44px] items-center text-sm text-muted transition-colors duration-200 hover:text-paper"
               >
                 {link.label}
               </Link>

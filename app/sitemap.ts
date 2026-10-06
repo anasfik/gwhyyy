@@ -7,14 +7,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const { content, updatedAt } = getSiteContentRecord();
   const base = content.seo.url;
   const updated = new Date(updatedAt);
+  // Static file mtime for public/privacy/sandouk.html (not DB-driven)
+  const privacyLastMod = new Date("2026-10-06T00:00:00Z");
+  // Note: only indexable HTML routes. llms.txt / llms.md / profile.json stay
+  // crawlable via <link rel="alternate"> but out of the sitemap (non-HTML).
+  // changeFrequency/priority omitted: ignored by Google, avoid false signals.
   return [
-    { url: base, lastModified: updated, changeFrequency: "monthly", priority: 1 },
-    { url: `${base}/projects`, lastModified: updated, changeFrequency: "monthly", priority: .9 },
-    ...getProjects(content).map((project) => ({ url: `${base}/projects/${project.slug}`, lastModified: updated, changeFrequency: "monthly" as const, priority: .8 })),
-    { url: `${base}/hire`, lastModified: updated, changeFrequency: "monthly", priority: .8 },
-    { url: `${base}/resume`, lastModified: updated, changeFrequency: "monthly", priority: .8 },
-    { url: `${base}/llms.txt`, lastModified: updated, changeFrequency: "monthly", priority: .5 },
-    { url: `${base}/llms.md`, lastModified: updated, changeFrequency: "monthly", priority: .5 },
-    { url: `${base}/profile.json`, lastModified: updated, changeFrequency: "monthly", priority: .5 },
+    { url: base, lastModified: updated },
+    { url: `${base}/projects`, lastModified: updated },
+    ...getProjects(content).map((project) => ({ url: `${base}/projects/${project.slug}`, lastModified: updated })),
+    { url: `${base}/hire`, lastModified: updated },
+    { url: `${base}/resume`, lastModified: updated },
+    { url: `${base}/privacy/sandouk`, lastModified: privacyLastMod },
   ];
 }
