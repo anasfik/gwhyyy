@@ -17,6 +17,13 @@ const nextConfig = {
       ],
     }];
   },
+  async rewrites() {
+    return [
+      // Clean URL for static privacy page: /privacy/sandouk -> /privacy/sandouk.html
+      // Any file placed under public/ is served at /*; this rewrite hides the .html extension.
+      { source: "/privacy/sandouk", destination: "/privacy/sandouk.html" },
+    ];
+  },
 };
 
 export default nextConfig;
