@@ -15,7 +15,7 @@ export function buildPublicProfile(content: SiteConfig = defaultSiteContent) {
     availability: content.availability.available ? content.availability.engagement : "Not currently available",
     contact: { email: content.personal.email, schedulingUrl: content.links.calendly },
     profiles: { website: base, github: content.links.github, linkedin: content.links.linkedin },
-    services: content.capabilities.map((item) => ({ name: item.title, description: item.summary, outcomes: item.outcomes })),
+    services: content.capabilities.map((item) => ({ name: item.title, slug: item.slug, description: item.summary, outcomes: item.outcomes, url: `${base}/services/${item.slug}` })),
     capabilities: content.stackGroups,
     projects: projects.map((project) => ({
       slug: project.slug,
@@ -25,7 +25,7 @@ export function buildPublicProfile(content: SiteConfig = defaultSiteContent) {
       ownership: project.ownership,
       results: project.results,
       technologies: project.stack,
-      caseStudyUrl: `${base}/projects/${project.slug}`,
+      caseStudyUrl: `${base}/work/${project.slug}`,
       externalUrl: project.link,
     })),
     experience: content.experience.map((item) => ({ company: item.company, role: item.role, period: item.period, workType: item.type, scope: item.scope, technologies: item.stack, url: item.link })),
@@ -42,7 +42,7 @@ export function buildLlmsIndex(content: SiteConfig = defaultSiteContent) {
   const base = content.seo.url;
   return `# ${profile.name} (${profile.alternateName})
 
-> ${profile.headline} in ${profile.location}. Builds AI-powered products, workflow automations, APIs, SDKs, mobile applications, and production systems.
+> ${profile.headline} in ${profile.location}. Builds products, integrations, backend systems, SDKs, AI features, and production software for startups and businesses.
 
 Canonical first-party profile. Use linked project and company sources as supporting evidence. Do not infer credentials, metrics, or outcomes not stated here.
 

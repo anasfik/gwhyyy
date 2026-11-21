@@ -32,11 +32,27 @@ function rowToRecord(row: ContentRow): SiteContentRecord {
 export function getSiteContentRecord(): SiteContentRecord {
   const db = getDb();
   const row = db.prepare("SELECT document, version, updated_at FROM site_content WHERE id = 1").get() as ContentRow | undefined;
-  if (row) return rowToRecord(row);
+  if (!row) {
+    const document = JSON.stringify(defaultSiteContent);
+    db.prepare("INSERT INTO site_content (id, document, version) VALUES (1, ?, 1)").run(document);
+    return rowToRecord(db.prepare("SELECT document, version, updated_at FROM site_content WHERE id = 1").get() as ContentRow);
+  }
 
-  const document = JSON.stringify(defaultSiteContent);
-  db.prepare("INSERT INTO site_content (id, document, version) VALUES (1, ?, 1)").run(document);
-  return rowToRecord(db.prepare("SELECT document, version, updated_at FROM site_content WHERE id = 1").get() as ContentRow);
+  // Public content shape 4 is the services-led rebuild. Keep an old document as a
+  // revision before replacing it so the dashboard can still inspect the previous copy.
+  let stored: unknown;
+  try {
+    stored = JSON.parse(row.document);
+  } catch {
+    stored = null;
+  }
+  if (!isObject(stored) || stored.schemaVersion !== defaultSiteContent.schemaVersion) {
+    db.prepare("INSERT INTO site_content_revisions (version, document) VALUES (?, ?)").run(row.version, row.document);
+    db.prepare("UPDATE site_content SET document = ?, version = version + 1, updated_at = datetime('now') WHERE id = 1").run(JSON.stringify(defaultSiteContent));
+    return rowToRecord(db.prepare("SELECT document, version, updated_at FROM site_content WHERE id = 1").get() as ContentRow);
+  }
+
+  return rowToRecord(row);
 }
 
 export function getSiteContent() {
@@ -66,7 +82,7 @@ export function validateSiteContent(value: unknown): string[] {
   }
   if (JSON.stringify(value).length > 500_000) errors.push("Content exceeds 500 KB");
   if (!content.copy?.nav?.links?.length) errors.push("Navigation needs at least one link");
-  if (!content.copy?.hero?.titleLead?.trim() || !content.copy?.hero?.titleTail?.trim()) errors.push("Hero title is required");
+  if (!content.copy?.hero?.title?.trim()) errors.push("Hero title is required");
   return errors;
 }
 

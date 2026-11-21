@@ -11,24 +11,14 @@ export default function manifest(): MetadataRoute.Manifest {
     description: siteConfig.seo.description,
     start_url: "/",
     display: "standalone",
-    background_color: "#0a0c0b",
-    theme_color: "#0a0c0b",
+    background_color: "#f3f4ee",
+    theme_color: "#f3f4ee",
     lang: "en",
     scope: "/",
     icons: [
-      {
-        src: "/icon",
-        sizes: "32x32",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/apple-icon",
-        sizes: "180x180",
-        type: "image/png",
-        purpose: "maskable",
-      },
+      { src: "/icon", sizes: "32x32", type: "image/png", purpose: "any" },
+      { src: "/apple-icon", sizes: "180x180", type: "image/png", purpose: "maskable" },
     ],
-    categories: ["developer", "technology", "portfolio"],
+    categories: ["business", "developer", "technology"],
   };
 }

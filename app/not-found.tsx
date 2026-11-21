@@ -1,10 +1,23 @@
 import Link from "next/link";
-import Nav from "@/components/layout/Nav";
-import Footer from "@/components/layout/Footer";
+import SiteShell from "@/components/layout/SiteShell";
 import { getSiteContent } from "@/lib/site-content";
 
 export default function NotFound() {
-  const { links, availability, copy } = getSiteContent();
+  const { copy } = getSiteContent();
   const text = copy.notFound;
-  return <><Nav copy={copy.nav} brand={copy.brand} calendly={links.calendly} availabilityLabel={availability.label} /><main id="main" className="flex min-h-[calc(100dvh-72px)] items-center pt-[72px]"><div className="shell py-20"><p className="label text-signal">{text.label}</p><h1 className="mt-6 max-w-4xl text-6xl font-semibold leading-[.9] tracking-[-.07em] md:text-9xl">{text.heading}</h1><p className="mt-8 max-w-lg text-lg leading-8 text-muted">{text.body}</p><div className="mt-10 flex flex-wrap gap-3"><Link href="/" className="bg-signal px-6 py-4 text-sm font-semibold uppercase tracking-wider text-ink">{text.homeCta}</Link><Link href="/projects" className="border border-line px-6 py-4 text-sm uppercase tracking-wider">{text.projectsCta}</Link></div></div></main><Footer /></>;
+  return (
+    <SiteShell>
+      <section className="flex min-h-[70dvh] items-center">
+        <div className="shell py-16 md:py-24">
+          <p className="label text-muted">{text.label}</p>
+          <h1 className="display mt-5 max-w-[12ch] text-[clamp(3rem,8vw,6rem)] font-semibold">{text.heading}</h1>
+          <p className="mt-6 max-w-lg text-lg leading-8 text-muted">{text.body}</p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Link href="/" className="inline-flex min-h-12 items-center bg-ink px-6 text-sm font-medium text-paper hover:bg-forest">{text.homeCta}</Link>
+            <Link href="/work" className="inline-flex min-h-12 items-center border border-line px-6 text-sm font-medium hover:border-ink">{text.workCta}</Link>
+          </div>
+        </div>
+      </section>
+    </SiteShell>
+  );
 }

@@ -14,16 +14,23 @@ function renderRobots(siteUrl: string): string {
     "Disallow: /api/",
     "Content-Signal: search=yes, ai-input=yes, ai-train=yes",
   ];
-  return [
-    "User-agent: *",
-    ...rules,
-    "",
-    "User-agent: [OAI-SearchBot, ChatGPT-User, GPTBot, ClaudeBot, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User, CCBot, Google-Extended, Applebot-Extended]",
-    ...rules,
-    "",
-    `Sitemap: ${siteUrl}/sitemap.xml`,
-    "",
-  ].join("\n");
+  const agents = [
+    "OAI-SearchBot",
+    "ChatGPT-User",
+    "GPTBot",
+    "ClaudeBot",
+    "Claude-SearchBot",
+    "Claude-User",
+    "PerplexityBot",
+    "Perplexity-User",
+    "CCBot",
+    "Google-Extended",
+    "Applebot-Extended",
+  ];
+  const groups = ["User-agent: *", ...rules, ""];
+  for (const agent of agents) groups.push(`User-agent: ${agent}`, ...rules, "");
+  groups.push(`Sitemap: ${siteUrl}/sitemap.xml`, "");
+  return groups.join("\n");
 }
 
 export async function GET(): Promise<Response> {

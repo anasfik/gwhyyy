@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import PageTracker from "@/components/portfolio/PageTracker";
 import { getSiteContent } from "@/lib/site-content";
 
 const geist = localFont({
@@ -16,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#0a0c0b",
-  colorScheme: "dark",
+  themeColor: "#f3f4ee",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
@@ -113,6 +114,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         provider: { "@id": `${seo.url}/#person` },
         areaServed: copy.structured.areaServed,
         serviceType: capabilities.map((capability) => capability.title),
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Engineering services",
+          itemListElement: capabilities.map((capability) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: capability.title,
+              description: capability.summary,
+              url: `${seo.url}/services/${capability.slug}`,
+            },
+          })),
+        },
       },
     ],
   };
@@ -128,8 +142,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="alternate" type="application/json" href="/profile.json" title="Structured professional profile" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body className="antialiased">
-        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[70] focus:bg-signal focus:px-4 focus:py-3 focus:text-ink">Skip to content</a>
+      <body className="bg-paper text-ink antialiased">
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[70] focus:bg-ink focus:px-4 focus:py-3 focus:text-paper">Skip to content</a>
+        <PageTracker />
         {children}
       </body>
     </html>

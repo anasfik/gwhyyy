@@ -17,6 +17,8 @@ export default function PageTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
+    // Admin pages are not audience traffic; counting them skews views and top pages.
+    if (pathname.startsWith("/dashboard") || pathname === "/login") return;
     track({ path: pathname, referrer: document.referrer });
 
     // One delegated listener captures all CTA/outbound clicks.
@@ -30,7 +32,7 @@ export default function PageTracker() {
       const anchor = el.closest("a") as HTMLAnchorElement | null;
       if (!anchor) return;
       const href = anchor.getAttribute("href") ?? "";
-       if (href === "#contact" || href.startsWith("/#contact")) {
+       if (href === "/contact" || href === "#contact" || href.startsWith("/contact?") || href.startsWith("/#contact")) {
          track({ path: pathname, event: "cta_contact_click", referrer: "" });
        } else if (href.includes("calendly.com")) {
          track({ path: pathname, event: "cta_calendly_click", referrer: "" });
@@ -38,6 +40,8 @@ export default function PageTracker() {
          track({ path: pathname, event: "email_click", referrer: "" });
        } else if (href === "/resume") {
          track({ path: pathname, event: "resume_view", referrer: "" });
+       } else if (href.startsWith("/services/")) {
+         track({ path: pathname, event: `service_view:${href.slice("/services/".length)}`, referrer: "" });
        } else if (href.includes("github.com")) {
          track({ path: pathname, event: "github_click", referrer: "" });
        } else if (href.includes("linkedin.com")) {

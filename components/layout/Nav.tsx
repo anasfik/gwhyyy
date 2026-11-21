@@ -11,7 +11,7 @@ type NavCopy = {
   secondaryCta: string;
 };
 
-export default function Nav({ copy, brand, calendly, availabilityLabel }: { copy: NavCopy; brand: { name: string; signature: string }; calendly: string; availabilityLabel: string }) {
+export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy; brand: { name: string; signature: string }; calendly?: string; availabilityLabel: string }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -27,63 +27,72 @@ export default function Nav({ copy, brand, calendly, availabilityLabel }: { copy
   }, [open]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-ink/95 backdrop-blur-md">
-      <div className="shell flex h-[72px] items-center justify-between">
+    <header className="sticky top-0 z-50 border-b border-line bg-paper/95 backdrop-blur-md">
+      <div className="shell flex h-16 items-center justify-between gap-6">
         <Link href="/" className="flex items-baseline gap-3" aria-label={`${brand.name} home`}>
-          <span className="text-xl font-semibold tracking-[-.05em]">{brand.name}</span>
-          <span className="label hidden text-muted sm:inline">{brand.signature}</span>
+          <span className="text-[1.35rem] font-semibold tracking-[-.06em]">{brand.name}</span>
+          <span className="label hidden text-muted xl:inline">{brand.signature}</span>
         </Link>
 
-        <div className="hidden items-center gap-7 lg:flex">
+        <div className="hidden items-center gap-7 md:flex">
           <nav aria-label="Main navigation" className="flex items-center gap-6">
-            {copy.links.map((link) => (
-              <Link
-                key={link.href + link.label}
-                href={link.href}
-                aria-current={pathname === link.href ? "page" : undefined}
-                className="inline-flex min-h-[44px] items-center text-sm text-muted transition-colors duration-200 hover:text-paper"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {copy.links.map((link) => {
+              const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`inline-flex min-h-11 items-center text-sm transition-colors ${active ? "text-ink" : "text-muted hover:text-ink"}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
-          <span className="h-5 w-px bg-line" />
-          <span className="label flex items-center gap-2 text-muted">
-            <i className="status-dot h-1.5 w-1.5 rounded-full bg-signal" aria-hidden="true" />
-            {copy.availableLabel}
-          </span>
-          <Link href="/#contact" className="bg-signal px-5 py-3 text-xs font-semibold uppercase tracking-[.1em] text-ink transition-colors hover:bg-paper active:translate-y-px">
+          <Link
+            href="/contact"
+            className="inline-flex min-h-11 items-center bg-ink px-5 text-sm font-medium text-paper transition-colors hover:bg-forest active:translate-y-px"
+          >
             {copy.primaryCta}
           </Link>
         </div>
 
         <button
           type="button"
-          className="relative h-11 w-11 lg:hidden"
+          className="relative -mr-2 h-11 w-11 md:hidden"
           aria-label={open ? "Close navigation" : "Open navigation"}
           aria-expanded={open}
           aria-controls="mobile-navigation"
           onClick={() => setOpen((value) => !value)}
         >
-          <span className={`absolute left-2.5 top-[17px] h-px w-6 bg-paper transition-transform ${open ? "translate-y-[4px] rotate-45" : ""}`} />
-          <span className={`absolute left-2.5 top-[25px] h-px w-6 bg-paper transition-transform ${open ? "-translate-y-[4px] -rotate-45" : ""}`} />
+          <span className={`absolute left-2.5 top-[18px] h-px w-6 bg-ink transition-transform ${open ? "translate-y-[4px] rotate-45" : ""}`} />
+          <span className={`absolute left-2.5 top-[26px] h-px w-6 bg-ink transition-transform ${open ? "-translate-y-[4px] -rotate-45" : ""}`} />
         </button>
       </div>
 
       {open && (
-        <div id="mobile-navigation" className="fixed inset-x-0 top-[72px] min-h-[calc(100dvh-72px)] border-t border-line bg-ink px-4 pb-8 lg:hidden">
+        <div id="mobile-navigation" className="fixed inset-x-0 top-16 min-h-[calc(100dvh-4rem)] border-t border-line bg-paper px-5 pb-8 md:hidden">
           <nav aria-label="Mobile navigation" className="divide-y divide-line">
-            {copy.links.map((link, index) => (
-              <Link key={link.href + link.label} href={link.href} onClick={() => setOpen(false)} className="flex min-h-16 items-center justify-between py-4 text-2xl tracking-[-.03em]">
-                {link.label}<span className="label text-muted">0{index + 1}</span>
+            {copy.links.map((link) => (
+              <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="flex min-h-16 items-center justify-between py-4 text-2xl tracking-[-.04em]">
+                {link.label}
+                <span className="label text-muted">0{copy.links.indexOf(link) + 1}</span>
               </Link>
             ))}
           </nav>
           <div className="mt-8 grid gap-3">
-            <Link href="/#contact" onClick={() => setOpen(false)} className="bg-signal px-6 py-4 text-center text-sm font-semibold uppercase tracking-[.1em] text-ink">{copy.primaryCta}</Link>
-            <a href={calendly} target="_blank" rel="noopener noreferrer" className="border border-line px-6 py-4 text-center text-sm uppercase tracking-[.1em]">{copy.secondaryCta}</a>
+            <Link href="/contact" onClick={() => setOpen(false)} className="bg-ink px-6 py-4 text-center text-sm font-medium text-paper">
+              {copy.primaryCta}
+            </Link>
+            <Link href="/work" onClick={() => setOpen(false)} className="border border-line px-6 py-4 text-center text-sm">
+              {copy.secondaryCta}
+            </Link>
           </div>
-          <p className="label mt-8 flex items-center gap-2 text-muted"><i className="h-1.5 w-1.5 rounded-full bg-signal" />{availabilityLabel}</p>
+          <p className="label mt-8 flex items-center gap-2 text-muted">
+            <i className="h-1.5 w-1.5 rounded-full bg-forest" aria-hidden="true" />
+            {availabilityLabel}
+          </p>
         </div>
       )}
     </header>
