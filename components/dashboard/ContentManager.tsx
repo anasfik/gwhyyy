@@ -174,16 +174,6 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
                 <Field key={k} label={k}><input value={draft.links[k]} onChange={(e) => set("links", { ...draft.links, [k]: e.target.value })} /></Field>
               ))}
             </Card>
-            <Card title="Proof bar metrics (4 max)">
-              {draft.metrics.map((m, i) => (
-                <div key={i} className="mb-3 grid grid-cols-[1fr_2fr_auto] gap-2">
-                  <input aria-label={`Metric ${i + 1} value`} value={m.value} onChange={(e) => set("metrics", draft.metrics.map((x, j) => j === i ? { ...x, value: e.target.value } : x))} />
-                  <input aria-label={`Metric ${i + 1} label`} value={m.label} onChange={(e) => set("metrics", draft.metrics.map((x, j) => j === i ? { ...x, label: e.target.value } : x))} />
-                  <button onClick={() => set("metrics", draft.metrics.filter((_, j) => j !== i))} aria-label={`Remove metric ${i + 1}`} className="border border-outline-variant px-3">×</button>
-                </div>
-              ))}
-              {draft.metrics.length < 6 && <button onClick={() => set("metrics", [...draft.metrics, { value: "", label: "" }])} className="border border-outline-variant px-4 py-2 text-[11px] uppercase tracking-widest">Add metric</button>}
-            </Card>
           </div>
         </div>
       )}

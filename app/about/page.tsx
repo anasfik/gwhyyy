@@ -140,7 +140,7 @@ export default function AboutPage() {
             <h2 className="display max-w-[16ch] text-3xl font-semibold md:text-5xl">{copy.about.ctaHeading}</h2>
             <p className="mt-4 max-w-xl text-sm leading-6 text-ink/75">{copy.about.ctaBody}</p>
           </div>
-          <Link href="/contact" className="inline-flex min-h-12 shrink-0 items-center bg-ink px-6 text-sm font-medium text-paper hover:bg-forest">Discuss your project</Link>
+            <Link href="/contact" className="inline-flex min-h-12 shrink-0 items-center bg-ink px-6 text-sm font-medium text-paper hover:bg-forest">{copy.nav.primaryCta}</Link>
         </div>
       </section>
     </SiteShell>

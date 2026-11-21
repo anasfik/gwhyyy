@@ -16,7 +16,8 @@
   color: var(--ws-ink);
   font: 14px/1.65 var(--font-workspace), system-ui, sans-serif;
 }
-.workspace[data-theme="dark"] {
+@media (prefers-color-scheme: dark) {
+ .workspace {
   --ws-canvas: #171a20;
   --ws-surface: #20242c;
   --ws-soft: #292e38;
@@ -29,6 +30,7 @@
   --ws-danger: #ffb4ad;
   --ws-success: #9ed1ae;
   color-scheme: dark;
+ }
 }
 .workspace * { border-color: var(--ws-line); }
 .workspace [class*="divide-"] > :not([hidden]) ~ :not([hidden]) { border-color: var(--ws-line); }

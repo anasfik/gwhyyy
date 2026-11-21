@@ -17,8 +17,11 @@ const geistMono = localFont({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#f3f4ee",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f3f4ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#121611" },
+  ],
+  colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
 };

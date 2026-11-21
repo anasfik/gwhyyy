@@ -949,26 +949,26 @@ const siteConfig = {
         { label: "About", href: "/about" },
       ],
       availableLabel: "Available",
-      primaryCta: "Discuss your project",
+      primaryCta: "Reach out",
       secondaryCta: "View work",
     },
     hero: {
       eyebrow: "Independent software engineer & product builder / Casablanca, working worldwide",
-      title: "I build software. From complex integrations to complete products.",
+      title: "AI-supercharged engineer who actually ships.",
       subline:
-        "I help startups and businesses turn ideas, technical challenges, and unfinished products into reliable, production-ready software.",
-      ctaPrimary: "Discuss your project",
+        "Quality work, built efficiently and shipped fast.",
+      ctaPrimary: "Reach out",
       ctaSecondary: "Explore my work",
       proofLabel: "Shipped and operated by me",
     },
     work: {
-      heading: "Selected work",
-      body: "Five products that show the range: a live API intelligence platform, a widely used open-source SDK, a production mobile product, a fintech SDK, and a protocol library.",
+      heading: "What I made and work(ed) at",
+      body: "My own products, open-source work, and teams I’ve been part of.",
       allLink: "All work",
     },
     services: {
-      heading: "What I can build for you",
-      body: "Four ways to engage, backed by the same engineering practice. Each one links to a detailed explanation and an inquiry form that starts with the right service selected.",
+      heading: "Ready to work with you.",
+      body: "",
     },
     contact: {
       eyebrow: "Start a conversation",
@@ -1004,7 +1004,7 @@ const siteConfig = {
       linkWork: "Work",
       linkAbout: "About",
       linkResume: "Resume",
-      linkContact: "Discuss your project",
+      linkContact: "Reach out",
       linkPrivacy: "Privacy",
       linkEmail: "Email",
       linkSchedule: "Schedule a call",
@@ -1056,7 +1056,7 @@ const siteConfig = {
       body: "Products, SDKs, and protocol libraries. Each case study states what was built, what I owned, and what can be verified.",
     },
     contactPage: {
-      heading: "Discuss your project",
+      heading: "Reach out",
       body: "Tell me what you need. The more concrete the problem, the easier it is to suggest a useful next step.",
       asideHeading: "What happens next",
       asideSteps: [

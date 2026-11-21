@@ -92,7 +92,7 @@ export default function ResumePage() {
 
       <footer className="mt-8 flex flex-wrap justify-between gap-3 border-t border-line pt-5 text-xs text-muted">
         <span>{personal.name} / {personal.handle}</span>
-        <Link href="/contact" className="no-print underline underline-offset-2 hover:text-ink">Discuss your project</Link>
+        <Link href="/contact" className="no-print underline underline-offset-2 hover:text-ink">{copy.nav.primaryCta}</Link>
       </footer>
     </main>
   );

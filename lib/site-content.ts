@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/db";
 import { defaultSiteContent, type SiteConfig } from "@/config/site";
+import { refreshPublicCopy } from "@/lib/public-copy";
 
 type ContentRow = { document: string; version: number; updated_at: string };
 
@@ -26,7 +27,7 @@ function withDefaults(stored: unknown, defaults: unknown): unknown {
 }
 
 function rowToRecord(row: ContentRow): SiteContentRecord {
-  return { content: withDefaults(JSON.parse(row.document), defaultSiteContent) as SiteConfig, version: row.version, updatedAt: row.updated_at };
+  return { content: refreshPublicCopy(withDefaults(JSON.parse(row.document), defaultSiteContent) as SiteConfig), version: row.version, updatedAt: row.updated_at };
 }
 
 export function getSiteContentRecord(): SiteContentRecord {

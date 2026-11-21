@@ -120,7 +120,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <div className="border-b border-line bg-panel">
             <div className="shell py-6 md:py-9">
               <figure>
-                <div className="relative aspect-[1440/950] overflow-hidden border border-line bg-white">
+                <div className="relative aspect-[1440/950] overflow-hidden border border-line bg-raised">
                   <Image src={hero.src} alt={hero.alt} fill priority sizes="(min-width: 1280px) 1240px, 100vw" className="object-cover object-top" />
                 </div>
                 {hero.caption && <figcaption className="mt-3 text-xs text-muted">{hero.caption}</figcaption>}
@@ -170,7 +170,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 <div className="shell grid gap-6 py-8 md:grid-cols-2 md:py-12">
                   {gallery.map((media) => (
                     <figure key={media.src} className={gallery.length === 3 ? "md:first:col-span-2" : ""}>
-                      <div className={`relative overflow-hidden border border-line bg-white ${gallery.length === 3 ? "aspect-[1440/950]" : "aspect-[1440/950]"}`}>
+                      <div className={`relative overflow-hidden border border-line bg-raised ${gallery.length === 3 ? "aspect-[1440/950]" : "aspect-[1440/950]"}`}>
                         <Image src={media.src} alt={media.alt} fill sizes="(min-width: 768px) 45vw, 100vw" className="object-cover object-top" />
                       </div>
                       {media.caption && <figcaption className="mt-2 text-xs text-muted">{media.caption}</figcaption>}

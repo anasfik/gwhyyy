@@ -6,38 +6,14 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-line bg-panel">
-      <div className="shell py-14 md:py-20">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
-          <div>
-            <p className="text-4xl font-semibold tracking-[-.06em]">{copy.brand.name}</p>
-            <p className="mt-5 max-w-sm text-sm leading-6 text-muted">{copy.footer.blurb}</p>
-            <p className="label mt-8 flex items-center gap-2 text-muted">
-              <i className="h-1.5 w-1.5 rounded-full bg-forest" aria-hidden="true" />
-              {personal.location} / {personal.workMode}
-            </p>
-          </div>
-          <div className="grid content-start gap-3 text-sm">
-            <p className="label mb-2 text-muted">{copy.footer.navigateHeading}</p>
-            <Link href="/services" className="hover:text-forest">{copy.footer.linkServices}</Link>
-            <Link href="/work" className="hover:text-forest">{copy.footer.linkWork}</Link>
-            <Link href="/about" className="hover:text-forest">{copy.footer.linkAbout}</Link>
-            <Link href="/resume" className="hover:text-forest">{copy.footer.linkResume}</Link>
-            <Link href="/contact" className="hover:text-forest">{copy.footer.linkContact}</Link>
-            <Link href="/privacy" className="hover:text-forest">{copy.footer.linkPrivacy}</Link>
-          </div>
-          <div className="grid content-start gap-3 text-sm">
-            <p className="label mb-2 text-muted">{copy.footer.connectHeading}</p>
-            <a href={links.github} target="_blank" rel="noopener noreferrer" className="hover:text-forest">GitHub</a>
-            <a href={links.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-forest">LinkedIn</a>
-            <a href={links.email} className="hover:text-forest">{copy.footer.linkEmail}</a>
-            {personal.phone && <a href={`tel:${personal.phone}`} className="hover:text-forest">{personal.phone}</a>}
-            <a href={links.calendly} target="_blank" rel="noopener noreferrer" className="hover:text-forest">{copy.footer.linkSchedule}</a>
-          </div>
-        </div>
-        <div className="label mt-14 flex flex-col justify-between gap-3 border-t border-line pt-6 text-muted sm:flex-row">
-          <span>© {new Date().getFullYear()} {personal.name}</span>
-          <span>Built and maintained by {personal.handle}</span>
-        </div>
+      <div className="shell flex flex-col justify-between gap-4 py-8 text-sm md:flex-row md:items-center">
+        <span className="text-muted">© {new Date().getFullYear()} {personal.name}</span>
+        <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6">
+          <a href={links.email} className="inline-flex min-h-11 items-center hover:text-forest">Email</a>
+          {personal.phone && <a href={`tel:${personal.phone}`} className="inline-flex min-h-11 items-center hover:text-forest">{personal.phone}</a>}
+          <a href={links.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center hover:text-forest">LinkedIn <span aria-hidden="true">↗</span></a>
+          <Link href="/privacy" className="inline-flex min-h-11 items-center hover:text-forest">{copy.footer.linkPrivacy}</Link>
+        </nav>
       </div>
     </footer>
   );

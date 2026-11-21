@@ -119,7 +119,7 @@ export default function ContactForm({ copy, email, services, stages, contactMeth
 
   if (status === "sent") {
     return (
-      <div ref={successRef} className="border border-forest bg-white p-7 md:p-10" role="status" aria-live="polite">
+      <div ref={successRef} className="border border-forest bg-raised p-7 md:p-10" role="status" aria-live="polite">
         <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-signal text-xl text-ink" aria-hidden="true">
           ✓
         </span>
@@ -160,7 +160,7 @@ export default function ContactForm({ copy, email, services, stages, contactMeth
         </legend>
         <div className="grid gap-2 sm:grid-cols-2">
           {services.map((service) => (
-            <label key={service.slug} className={`flex min-h-12 cursor-pointer items-center gap-3 border px-3.5 py-2 text-sm transition-colors ${form.service === service.slug ? "border-forest bg-forest text-paper" : "border-line bg-white hover:border-forest"}`}>
+            <label key={service.slug} className={`flex min-h-12 cursor-pointer items-center gap-3 border px-3.5 py-2 text-sm transition-colors ${form.service === service.slug ? "border-forest bg-forest text-paper" : "border-line bg-raised hover:border-forest"}`}>
               <input
                 type="radio"
                 name="service"
@@ -189,7 +189,7 @@ export default function ContactForm({ copy, email, services, stages, contactMeth
         <textarea id="description" name="description" required minLength={20} maxLength={5000} rows={6} value={form.description} onChange={change} className="field resize-y" aria-describedby="description-hint" />
       </Field>
 
-      <details className="border border-line bg-white">
+      <details className="border border-line bg-raised">
         <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-sm">
           <span>{copy.optional} context</span>
           <span className="label hidden text-muted sm:inline">{copy.fieldCompany} / {copy.fieldWebsite} / {copy.fieldTimeframe}</span>
@@ -224,7 +224,7 @@ export default function ContactForm({ copy, email, services, stages, contactMeth
       </div>
 
       {status === "error" && (
-        <p ref={errorRef} className="border border-danger bg-white px-4 py-3 text-sm text-danger" role="alert">
+        <p ref={errorRef} className="border border-danger bg-raised px-4 py-3 text-sm text-danger" role="alert">
           {copy.errorMessage}
         </p>
       )}

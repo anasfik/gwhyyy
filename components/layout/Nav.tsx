@@ -1,27 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 type NavCopy = {
   links: { label: string; href: string }[];
-  availableLabel: string;
   primaryCta: string;
   secondaryCta: string;
 };
 
-export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy; brand: { name: string; signature: string }; calendly?: string; availabilityLabel: string }) {
+export default function Nav({ copy, brand, github }: { copy: NavCopy; brand: { name: string }; github: string }) {
   const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     if (!open) return;
-    const close = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
-    document.body.style.overflow = "hidden";
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setOpen(false); trigger.current?.focus(); }
+    };
     document.addEventListener("keydown", close);
     return () => {
-      document.body.style.overflow = "";
       document.removeEventListener("keydown", close);
     };
   }, [open]);
@@ -31,7 +31,6 @@ export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy;
       <div className="shell flex h-16 items-center justify-between gap-6">
         <Link href="/" className="flex items-baseline gap-3" aria-label={`${brand.name} home`}>
           <span className="text-[1.35rem] font-semibold tracking-[-.06em]">{brand.name}</span>
-          <span className="label hidden text-muted xl:inline">{brand.signature}</span>
         </Link>
 
         <div className="hidden items-center gap-7 md:flex">
@@ -50,6 +49,9 @@ export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy;
               );
             })}
           </nav>
+          <a href={github} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 text-sm hover:text-forest">
+            GitHub <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span>
+          </a>
           <Link
             href="/contact"
             className="inline-flex min-h-11 items-center bg-ink px-5 text-sm font-medium text-paper transition-colors hover:bg-forest active:translate-y-px"
@@ -59,6 +61,7 @@ export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy;
         </div>
 
         <button
+          ref={trigger}
           type="button"
           className="relative -mr-2 h-11 w-11 md:hidden"
           aria-label={open ? "Close navigation" : "Open navigation"}
@@ -72,7 +75,7 @@ export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy;
       </div>
 
       {open && (
-        <div id="mobile-navigation" className="fixed inset-x-0 top-16 min-h-[calc(100dvh-4rem)] border-t border-line bg-paper px-5 pb-8 md:hidden">
+        <div id="mobile-navigation" className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-paper px-5 pb-8 md:hidden">
           <nav aria-label="Mobile navigation" className="divide-y divide-line">
             {copy.links.map((link) => (
               <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="flex min-h-16 items-center justify-between py-4 text-2xl tracking-[-.04em]">
@@ -80,6 +83,9 @@ export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy;
                 <span className="label text-muted">0{copy.links.indexOf(link) + 1}</span>
               </Link>
             ))}
+            <a href={github} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="flex min-h-16 items-center justify-between py-4 text-2xl tracking-[-.04em]">
+              GitHub <span aria-hidden="true">↗</span><span className="sr-only"> (opens in a new tab)</span>
+            </a>
           </nav>
           <div className="mt-8 grid gap-3">
             <Link href="/contact" onClick={() => setOpen(false)} className="bg-ink px-6 py-4 text-center text-sm font-medium text-paper">
@@ -89,10 +95,6 @@ export default function Nav({ copy, brand, availabilityLabel }: { copy: NavCopy;
               {copy.secondaryCta}
             </Link>
           </div>
-          <p className="label mt-8 flex items-center gap-2 text-muted">
-            <i className="h-1.5 w-1.5 rounded-full bg-forest" aria-hidden="true" />
-            {availabilityLabel}
-          </p>
         </div>
       )}
     </header>

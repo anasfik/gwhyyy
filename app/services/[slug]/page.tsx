@@ -113,7 +113,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <div className="border-t border-line pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
               <p className="text-sm leading-6 text-muted">Start with this service selected, or describe the problem and I will suggest the right scope.</p>
               <Link href={`/contact?service=${service.slug}`} data-track={`service_inquiry:${service.slug}`} className="mt-5 inline-flex min-h-12 items-center bg-ink px-6 text-sm font-medium text-paper hover:bg-forest">
-                Discuss your project
+                {copy.nav.primaryCta}
               </Link>
               <p className="mt-5 text-xs text-muted">Direct: <a href={`mailto:${personal.email}`} className="underline underline-offset-2 hover:text-ink">{personal.email}</a></p>
             </div>

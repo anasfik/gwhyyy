@@ -5,17 +5,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Public site (light editorial)
-        ink: "#11140f",
-        paper: "#f3f4ee",
-        panel: "#e9ebe2",
-        raised: "#ffffff",
-        line: "#d5d9ce",
-        signal: "#b7f56a",
-        muted: "#596157",
-        forest: "#1d4a2a",
-        flare: "#e6ffb8",
-        danger: "#a32218",
+        // Semantic channels preserve opacity utilities in both system themes.
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        paper: "rgb(var(--color-paper) / <alpha-value>)",
+        panel: "rgb(var(--color-panel) / <alpha-value>)",
+        raised: "rgb(var(--color-raised) / <alpha-value>)",
+        line: "rgb(var(--color-line) / <alpha-value>)",
+        signal: "rgb(var(--color-signal) / <alpha-value>)",
+        muted: "rgb(var(--color-muted) / <alpha-value>)",
+        forest: "rgb(var(--color-forest) / <alpha-value>)",
+        flare: "rgb(var(--color-flare) / <alpha-value>)",
+        danger: "rgb(var(--color-danger) / <alpha-value>)",
         // Admin dashboard (dark, existing)
         surface: "#0a0c0b",
         background: "#0a0c0b",

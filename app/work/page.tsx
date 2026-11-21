@@ -71,7 +71,7 @@ export default function WorkPage() {
       <section className="bg-signal">
         <div className="shell flex flex-col gap-6 py-12 md:flex-row md:items-center md:justify-between md:py-14">
           <p className="max-w-xl text-lg font-medium tracking-[-.03em]">Have a product, integration, or SDK that needs to ship?</p>
-          <a href="/contact" className="inline-flex min-h-12 shrink-0 items-center bg-ink px-6 text-sm font-medium text-paper hover:bg-forest">Discuss your project</a>
+          <a href="/contact" className="inline-flex min-h-12 shrink-0 items-center bg-ink px-6 text-sm font-medium text-paper hover:bg-forest">{copy.nav.primaryCta}</a>
         </div>
       </section>
     </SiteShell>
