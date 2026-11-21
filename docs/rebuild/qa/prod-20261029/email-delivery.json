@@ -1,0 +1,23 @@
+{
+  "verified_at": "2026-10-29T03:45:00Z",
+  "environment": "production",
+  "contact_id": 8,
+  "submission_id": "91d20989-e940-47bf-b6d2-7c17950839bf",
+  "api_response": { "ok": true, "id": 8, "notified": true, "http_status": 201 },
+  "database": {
+    "email_status": "sent",
+    "notified_at": "2026-10-29 03:43:42"
+  },
+  "resend": {
+    "email_id": "01a185c1-a1c5-730e-8792-44f70e17ca49",
+    "from": "portfolio@flutterguard.dev",
+    "to": ["work@gwhyyy.com"],
+    "subject": "Inquiry: AI Engineering — GWHYYY QA",
+    "last_event": "delivered",
+    "created_at": "2026-10-29 03:43:42.182000+00"
+  },
+  "notes": [
+    "Sender is portfolio@flutterguard.dev because gwhyyy.com is not verified in this Resend account.",
+    "API key intentionally omitted."
+  ]
+}

@@ -1,0 +1,1048 @@
+{
+ "pages": [
+  {
+   "vp": "desktop",
+   "path": "/",
+   "status": 200,
+   "title": "Mohamed Anas Fikhi \u2014 Software Engineer & Product Builder",
+   "canonical": "https://gwhyyy.com",
+   "h1": [
+    "I build software. From complex integrations to complete products."
+   ],
+   "overflow": 0,
+   "imgs": 6,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/services",
+   "status": 200,
+   "title": "Software Engineering Services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services",
+   "h1": [
+    "Services"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/services/product-engineering",
+   "status": 200,
+   "title": "Product engineering services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/product-engineering",
+   "h1": [
+    "Product engineering"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/services/integrations-infrastructure",
+   "status": 200,
+   "title": "Integrations & infrastructure services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/integrations-infrastructure",
+   "h1": [
+    "Integrations & infrastructure"
+   ],
+   "overflow": 0,
+   "imgs": 4,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/services/ai-engineering",
+   "status": 200,
+   "title": "AI engineering services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/ai-engineering",
+   "h1": [
+    "AI engineering"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/services/existing-product-development",
+   "status": 200,
+   "title": "Existing product development services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/existing-product-development",
+   "h1": [
+    "Existing product development"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/work",
+   "status": 200,
+   "title": "Software Engineering Case Studies | GWHYYY",
+   "canonical": "https://gwhyyy.com/work",
+   "h1": [
+    "Work"
+   ],
+   "overflow": 0,
+   "imgs": 5,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/work/reqistry",
+   "status": 200,
+   "title": "Reqistry \u2014 API intelligence platform | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/reqistry",
+   "h1": [
+    "Reqistry"
+   ],
+   "overflow": 0,
+   "imgs": 4,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/work/dart-openai",
+   "status": 200,
+   "title": "Dart OpenAI \u2014 Open-source SDK | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/dart-openai",
+   "h1": [
+    "Dart OpenAI"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/work/gathr",
+   "status": 200,
+   "title": "Gathr \u2014 Production mobile product | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/gathr",
+   "h1": [
+    "Gathr"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/work/rollee-connect",
+   "status": 200,
+   "title": "Rollee Connect SDK \u2014 Fintech SDK | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/rollee-connect",
+   "h1": [
+    "Rollee Connect SDK"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/work/dart-nostr",
+   "status": 200,
+   "title": "Dart Nostr \u2014 Protocol engineering | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/dart-nostr",
+   "h1": [
+    "Dart Nostr"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/about",
+   "status": 200,
+   "title": "About Mohamed Anas Fikhi | GWHYYY",
+   "canonical": "https://gwhyyy.com/about",
+   "h1": [
+    "An engineer who builds products."
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/contact",
+   "status": 200,
+   "title": "Discuss Your Project | GWHYYY",
+   "canonical": "https://gwhyyy.com/contact",
+   "h1": [
+    "Tell me what you are trying to build."
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/resume",
+   "status": 200,
+   "title": "Resume \u2014 Mohamed Anas Fikhi | GWHYYY",
+   "canonical": "https://gwhyyy.com/resume",
+   "h1": [
+    "Mohamed Anas Fikhi"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/privacy",
+   "status": 200,
+   "title": "Privacy notice | GWHYYY",
+   "canonical": "https://gwhyyy.com/privacy",
+   "h1": [
+    "Privacy notice"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "desktop",
+   "path": "/privacy/sandouk",
+   "status": 200,
+   "title": "Sandouk \u2014 Privacy Policy",
+   "canonical": "https://gwhyyy.com/privacy/sandouk",
+   "h1": [
+    "Sandouk \u2014 Privacy Policy"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/",
+   "status": 200,
+   "title": "Mohamed Anas Fikhi \u2014 Software Engineer & Product Builder",
+   "canonical": "https://gwhyyy.com",
+   "h1": [
+    "I build software. From complex integrations to complete products."
+   ],
+   "overflow": 0,
+   "imgs": 6,
+   "broken_imgs": [
+    {
+     "alt": "Rollee website showing employment, income, and scoring data product",
+     "w": 0,
+     "h": 0,
+     "src": "https://gwhyyy.com/_next/image?url=%2Fwork%2Frollee.webp&w=3840&q=75"
+    },
+    {
+     "alt": "pub.dev page for the nostr package showing version 11.0.0 and protocol capabilities",
+     "w": 0,
+     "h": 0,
+     "src": "https://gwhyyy.com/_next/image?url=%2Fwork%2Fdart-nostr.webp&w=3840&q=75"
+    }
+   ],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/services",
+   "status": 200,
+   "title": "Software Engineering Services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services",
+   "h1": [
+    "Services"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/services/product-engineering",
+   "status": 200,
+   "title": "Product engineering services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/product-engineering",
+   "h1": [
+    "Product engineering"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/services/integrations-infrastructure",
+   "status": 200,
+   "title": "Integrations & infrastructure services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/integrations-infrastructure",
+   "h1": [
+    "Integrations & infrastructure"
+   ],
+   "overflow": 0,
+   "imgs": 4,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/services/ai-engineering",
+   "status": 200,
+   "title": "AI engineering services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/ai-engineering",
+   "h1": [
+    "AI engineering"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/services/existing-product-development",
+   "status": 200,
+   "title": "Existing product development services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/existing-product-development",
+   "h1": [
+    "Existing product development"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/work",
+   "status": 200,
+   "title": "Software Engineering Case Studies | GWHYYY",
+   "canonical": "https://gwhyyy.com/work",
+   "h1": [
+    "Work"
+   ],
+   "overflow": 0,
+   "imgs": 5,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/work/reqistry",
+   "status": 200,
+   "title": "Reqistry \u2014 API intelligence platform | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/reqistry",
+   "h1": [
+    "Reqistry"
+   ],
+   "overflow": 0,
+   "imgs": 4,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/work/dart-openai",
+   "status": 200,
+   "title": "Dart OpenAI \u2014 Open-source SDK | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/dart-openai",
+   "h1": [
+    "Dart OpenAI"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/work/gathr",
+   "status": 200,
+   "title": "Gathr \u2014 Production mobile product | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/gathr",
+   "h1": [
+    "Gathr"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/work/rollee-connect",
+   "status": 200,
+   "title": "Rollee Connect SDK \u2014 Fintech SDK | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/rollee-connect",
+   "h1": [
+    "Rollee Connect SDK"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/work/dart-nostr",
+   "status": 200,
+   "title": "Dart Nostr \u2014 Protocol engineering | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/dart-nostr",
+   "h1": [
+    "Dart Nostr"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/about",
+   "status": 200,
+   "title": "About Mohamed Anas Fikhi | GWHYYY",
+   "canonical": "https://gwhyyy.com/about",
+   "h1": [
+    "An engineer who builds products."
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/contact",
+   "status": 200,
+   "title": "Discuss Your Project | GWHYYY",
+   "canonical": "https://gwhyyy.com/contact",
+   "h1": [
+    "Tell me what you are trying to build."
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/resume",
+   "status": 200,
+   "title": "Resume \u2014 Mohamed Anas Fikhi | GWHYYY",
+   "canonical": "https://gwhyyy.com/resume",
+   "h1": [
+    "Mohamed Anas Fikhi"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/privacy",
+   "status": 200,
+   "title": "Privacy notice | GWHYYY",
+   "canonical": "https://gwhyyy.com/privacy",
+   "h1": [
+    "Privacy notice"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "tablet",
+   "path": "/privacy/sandouk",
+   "status": 200,
+   "title": "Sandouk \u2014 Privacy Policy",
+   "canonical": "https://gwhyyy.com/privacy/sandouk",
+   "h1": [
+    "Sandouk \u2014 Privacy Policy"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/",
+   "status": 200,
+   "title": "Mohamed Anas Fikhi \u2014 Software Engineer & Product Builder",
+   "canonical": "https://gwhyyy.com",
+   "h1": [
+    "I build software. From complex integrations to complete products."
+   ],
+   "overflow": 0,
+   "imgs": 6,
+   "broken_imgs": [
+    {
+     "alt": "pub.dev page for dart_openai version 8.0.0 showing 576 likes, 160 pub points, and 18k downloads",
+     "w": 0,
+     "h": 0,
+     "src": "https://gwhyyy.com/_next/image?url=%2Fwork%2Fdart-openai.webp&w=3840&q=75"
+    },
+    {
+     "alt": "Gathr homepage showing community fundraising screens on iOS and Android",
+     "w": 0,
+     "h": 0,
+     "src": "https://gwhyyy.com/_next/image?url=%2Fwork%2Fgathr.webp&w=3840&q=75"
+    },
+    {
+     "alt": "Rollee website showing employment, income, and scoring data product",
+     "w": 0,
+     "h": 0,
+     "src": "https://gwhyyy.com/_next/image?url=%2Fwork%2Frollee.webp&w=3840&q=75"
+    },
+    {
+     "alt": "pub.dev page for the nostr package showing version 11.0.0 and protocol capabilities",
+     "w": 0,
+     "h": 0,
+     "src": "https://gwhyyy.com/_next/image?url=%2Fwork%2Fdart-nostr.webp&w=3840&q=75"
+    }
+   ],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/services",
+   "status": 200,
+   "title": "Software Engineering Services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services",
+   "h1": [
+    "Services"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/services/product-engineering",
+   "status": 200,
+   "title": "Product engineering services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/product-engineering",
+   "h1": [
+    "Product engineering"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/services/integrations-infrastructure",
+   "status": 200,
+   "title": "Integrations & infrastructure services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/integrations-infrastructure",
+   "h1": [
+    "Integrations & infrastructure"
+   ],
+   "overflow": 0,
+   "imgs": 4,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/services/ai-engineering",
+   "status": 200,
+   "title": "AI engineering services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/ai-engineering",
+   "h1": [
+    "AI engineering"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/services/existing-product-development",
+   "status": 200,
+   "title": "Existing product development services | GWHYYY",
+   "canonical": "https://gwhyyy.com/services/existing-product-development",
+   "h1": [
+    "Existing product development"
+   ],
+   "overflow": 0,
+   "imgs": 2,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/work",
+   "status": 200,
+   "title": "Software Engineering Case Studies | GWHYYY",
+   "canonical": "https://gwhyyy.com/work",
+   "h1": [
+    "Work"
+   ],
+   "overflow": 0,
+   "imgs": 5,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/work/reqistry",
+   "status": 200,
+   "title": "Reqistry \u2014 API intelligence platform | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/reqistry",
+   "h1": [
+    "Reqistry"
+   ],
+   "overflow": 0,
+   "imgs": 4,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/work/dart-openai",
+   "status": 200,
+   "title": "Dart OpenAI \u2014 Open-source SDK | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/dart-openai",
+   "h1": [
+    "Dart OpenAI"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/work/gathr",
+   "status": 200,
+   "title": "Gathr \u2014 Production mobile product | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/gathr",
+   "h1": [
+    "Gathr"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/work/rollee-connect",
+   "status": 200,
+   "title": "Rollee Connect SDK \u2014 Fintech SDK | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/rollee-connect",
+   "h1": [
+    "Rollee Connect SDK"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/work/dart-nostr",
+   "status": 200,
+   "title": "Dart Nostr \u2014 Protocol engineering | GWHYYY",
+   "canonical": "https://gwhyyy.com/work/dart-nostr",
+   "h1": [
+    "Dart Nostr"
+   ],
+   "overflow": 0,
+   "imgs": 1,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/about",
+   "status": 200,
+   "title": "About Mohamed Anas Fikhi | GWHYYY",
+   "canonical": "https://gwhyyy.com/about",
+   "h1": [
+    "An engineer who builds products."
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/contact",
+   "status": 200,
+   "title": "Discuss Your Project | GWHYYY",
+   "canonical": "https://gwhyyy.com/contact",
+   "h1": [
+    "Tell me what you are trying to build."
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/resume",
+   "status": 200,
+   "title": "Resume \u2014 Mohamed Anas Fikhi | GWHYYY",
+   "canonical": "https://gwhyyy.com/resume",
+   "h1": [
+    "Mohamed Anas Fikhi"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/privacy",
+   "status": 200,
+   "title": "Privacy notice | GWHYYY",
+   "canonical": "https://gwhyyy.com/privacy",
+   "h1": [
+    "Privacy notice"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  },
+  {
+   "vp": "mobile",
+   "path": "/privacy/sandouk",
+   "status": 200,
+   "title": "Sandouk \u2014 Privacy Policy",
+   "canonical": "https://gwhyyy.com/privacy/sandouk",
+   "h1": [
+    "Sandouk \u2014 Privacy Policy"
+   ],
+   "overflow": 0,
+   "imgs": 0,
+   "broken_imgs": [],
+   "noalt": [],
+   "nostrmind": 0,
+   "price": false,
+   "console": []
+  }
+ ],
+ "nav": [
+  {
+   "test": "desktop-nav",
+   "label": "Services",
+   "url": "https://gwhyyy.com/services",
+   "h1": "Services"
+  },
+  {
+   "test": "desktop-nav",
+   "label": "Work",
+   "url": "https://gwhyyy.com/work",
+   "h1": "Work"
+  },
+  {
+   "test": "desktop-nav",
+   "label": "About",
+   "url": "https://gwhyyy.com/about",
+   "h1": "An engineer who builds products."
+  },
+  {
+   "test": "desktop-nav",
+   "label": "Discuss your project",
+   "url": "https://gwhyyy.com/contact",
+   "h1": "Tell me what you are trying to build."
+  },
+  {
+   "test": "menu-open",
+   "expanded": "true",
+   "overflow": "hidden",
+   "links": 5
+  },
+  {
+   "test": "menu-escape",
+   "present": 0,
+   "overflow": ""
+  },
+  {
+   "test": "menu-link",
+   "url": "https://gwhyyy.com/work",
+   "h1": "Work"
+  },
+  {
+   "test": "skip-link-focus",
+   "focused": "Skip to content",
+   "tag": "A"
+  }
+ ],
+ "form": {
+  "preselected": true,
+  "source_note": 1,
+  "invalid_on_empty": 5,
+  "email": "qa+1793242502@example.com",
+  "status": 201,
+  "payload": {
+   "ok": true,
+   "id": 7,
+   "notified": false
+  },
+  "success_heading": "Inquiry received.",
+  "url": "https://gwhyyy.com/contact?service=ai-engineering&from=reqistry",
+  "db_email_status": "not_configured",
+  "cleanup": "QA rows 6 and 7 and their events were deleted after verification."
+ },
+ "links": [
+  {
+   "href": "/",
+   "status": 200
+  },
+  {
+   "href": "/about",
+   "status": 200
+  },
+  {
+   "href": "/contact",
+   "status": 200
+  },
+  {
+   "href": "/contact?service=other",
+   "status": 200
+  },
+  {
+   "href": "/privacy",
+   "status": 200
+  },
+  {
+   "href": "/resume",
+   "status": 200
+  },
+  {
+   "href": "/services",
+   "status": 200
+  },
+  {
+   "href": "/services/ai-engineering",
+   "status": 200
+  },
+  {
+   "href": "/services/existing-product-development",
+   "status": 200
+  },
+  {
+   "href": "/services/integrations-infrastructure",
+   "status": 200
+  },
+  {
+   "href": "/services/product-engineering",
+   "status": 200
+  },
+  {
+   "href": "/work",
+   "status": 200
+  },
+  {
+   "href": "/work/dart-nostr",
+   "status": 200
+  },
+  {
+   "href": "/work/dart-openai",
+   "status": 200
+  },
+  {
+   "href": "/work/gathr",
+   "status": 200
+  },
+  {
+   "href": "/work/reqistry",
+   "status": 200
+  },
+  {
+   "href": "/work/rollee-connect",
+   "status": 200
+  }
+ ],
+ "errors": [],
+ "note": "Lazy images were initially reported with naturalWidth=0 before scrolling; the corrected image pass scrolled each page and found 0 broken images across 51 checks.",
+ "images": {
+  "checked": 51,
+  "bad": []
+ }
+}
