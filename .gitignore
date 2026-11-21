@@ -79,3 +79,6 @@ Thumbs.db
 # ─── Docker override files (local only) ────────────────────────────────────────
 docker-compose.override.yml
 docker-compose.local.yml
+
+# Deploy scratch (generated per-deploy overrides)
+privacy-deploy-*/

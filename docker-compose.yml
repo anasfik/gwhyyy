@@ -8,6 +8,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.production
+      - path: ${OUTREACH_SECRETS_FILE:-/home/gw/.config/gwhyyy/email.env}
+        required: false
     environment:
       - NODE_ENV=production
       - PORT=3000

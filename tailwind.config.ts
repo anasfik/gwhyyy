@@ -5,13 +5,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0a0c0b",
-        panel: "#101311",
-        raised: "#161a17",
-        line: "#2a302b",
+        // Public site (light editorial)
+        ink: "#11140f",
+        paper: "#f3f4ee",
+        panel: "#e9ebe2",
+        raised: "#ffffff",
+        line: "#d5d9ce",
         signal: "#b7f56a",
-        paper: "#f2f4ef",
-        muted: "#9ca59d",
+        muted: "#596157",
+        forest: "#1d4a2a",
+        flare: "#e6ffb8",
+        danger: "#a32218",
+        // Admin dashboard (dark, existing)
         surface: "#0a0c0b",
         background: "#0a0c0b",
         primary: "#f2f4ef",
@@ -26,7 +31,7 @@ const config: Config = {
         "surface-container-highest": "#1c211d",
         error: "#ff8b82",
       },
-      maxWidth: { shell: "1440px", copy: "68ch" },
+      maxWidth: { shell: "1280px", copy: "68ch" },
       fontFamily: {
         sans: ["var(--font-geist)", "Arial", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],

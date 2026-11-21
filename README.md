@@ -1,28 +1,31 @@
 # gwhyyy.com
 
-Portfolio and project-intake site for [Mohamed Anas Fikhi](https://github.com/anasfik), AI Product & Automation Engineer based in Casablanca, Morocco.
+Freelance website for [Mohamed Anas Fikhi](https://github.com/anasfik), an independent software engineer and product builder based in Casablanca, Morocco.
 
 ## Stack
 
 - Next.js 16 App Router, React 19, TypeScript, Tailwind CSS
-- SQLite via `better-sqlite3` for contact messages and first-party analytics
+- SQLite via `better-sqlite3` for inquiries, first-party analytics, and the content document
 - NextAuth for protected admin routes
 - Docker and nginx for self-hosted deployment
 
+## Routes
+
+- `/` — positioning, four services, selected work, process, FAQ, inquiry CTA
+- `/services` and `/services/[slug]` — four service categories
+- `/work` and `/work/[slug]` — five case studies
+- `/about`, `/contact`, `/resume`, `/privacy`
+- `/privacy/sandouk` — separate app policy
+- `/llms.txt`, `/llms.md`, `/profile.json` — machine-readable profile
+- `/dashboard` — authenticated lead inbox and content editor
+
+Legacy `/projects/*` and `/hire` links redirect permanently.
+
 ## Content
 
-`config/site.ts` is the typed source of truth for identity, projects, experience, capabilities, metrics, links, FAQ, resume, SEO, and machine-readable profiles.
+`config/site.ts` is the typed default content: identity, four services, five projects, experience, metrics with sources, FAQ, form options, SEO, and machine-readable profiles.
 
-Public routes include:
-
-- `/`
-- `/projects`
-- `/projects/[slug]`
-- `/hire`
-- `/resume`
-- `/llms.txt`
-- `/llms.md`
-- `/profile.json`
+At runtime the dashboard-edited SQLite document wins. A `schemaVersion` mismatch archives the old document in `site_content_revisions` and installs the current defaults.
 
 ## Development
 
@@ -34,7 +37,17 @@ npm run typecheck
 npm run build
 ```
 
-Admin dashboard lives at `/login` and `/dashboard`. Runtime credentials come from environment variables documented in `.env.example`.
+## Inquiry email
+
+Inquiries are stored in SQLite first. Optional Resend delivery is configured with:
+
+```bash
+RESEND_API_KEY=
+CONTACT_FROM_EMAIL=portfolio@gwhyyy.com
+CONTACT_TO_EMAIL=work@gwhyyy.com
+```
+
+See `docs/rebuild/FORM-SETUP.md` for validation, idempotency, rate limits, and the production verification checklist.
 
 ## Deployment
 
@@ -43,3 +56,7 @@ Admin dashboard lives at `/login` and `/dashboard`. Runtime credentials come fro
 ```
 
 Docker Compose exposes nginx on port `8080`; production TLS can terminate at an external proxy or be configured separately.
+
+## Documentation
+
+Rebuild audit and decisions: `docs/rebuild/`.

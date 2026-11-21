@@ -7,18 +7,21 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node tests/run.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
     "next": "^16.3.6",
     "next-auth": "^4.24.15",
+    "outreach-smtp": "npm:nodemailer@^10.3.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
+    "@types/outreach-smtp": "npm:@types/nodemailer@^8.0.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint": "^9.39.5",
