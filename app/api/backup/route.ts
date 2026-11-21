@@ -1,16 +1,14 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { isAdminAuthorized } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 
 // ponytail: VACUUM INTO gives a consistent single-file snapshot; switch to an object-store
 // uploader when backups need to leave the host automatically.
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(req: NextRequest) {
+  if (!(await isAdminAuthorized(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const target = path.join(os.tmpdir(), `gwhyyy-backup-${stamp}.db`);

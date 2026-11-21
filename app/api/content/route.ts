@@ -1,17 +1,16 @@
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
+import { isAdminAuthorized } from "@/lib/admin-auth";
 import { getSiteContentRecord, listSiteContentRevisions, restoreSiteContentRevision, saveSiteContent } from "@/lib/site-content";
 import type { SiteConfig } from "@/config/site";
 
-async function authorized() {
-  return Boolean(await getServerSession(authOptions));
+async function authorized(req: NextRequest) {
+  return isAdminAuthorized(req);
 }
 
 const WEAK_PASSWORDS = ["changeme123", "change-me-to-a-strong-password", "build-time-placeholder", "your-secure-password-here", "change-this-to-a-long-random-secret-string"];
 
-export async function GET() {
-  if (!(await authorized())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(req: NextRequest) {
+  if (!(await authorized(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const password = process.env.ADMIN_PASSWORD ?? "";
   return NextResponse.json({
     ...getSiteContentRecord(),
@@ -21,7 +20,7 @@ export async function GET() {
 }
 
 export async function PUT(req: NextRequest) {
-  if (!(await authorized())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await authorized(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (!req.headers.get("content-type")?.startsWith("application/json")) return NextResponse.json({ error: "JSON required" }, { status: 415 });
   let body: { content?: SiteConfig; version?: number };
   try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
@@ -31,7 +30,7 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!(await authorized())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await authorized(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   let body: { revisionId?: number; version?: number };
   try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
   if (!Number.isInteger(body.revisionId) || !Number.isInteger(body.version)) return NextResponse.json({ error: "Revision and version required" }, { status: 400 });

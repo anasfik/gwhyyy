@@ -1,108 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-type Stats = {
-  totalViews: number;
-  views7d: number;
-  views30d: number;
-  totalContacts: number;
-  unreadContacts: number;
-  leads30d: number;
-  conversion30d: number;
-  pipeline: { stage: string; count: number }[];
-  dailyViews: { day: string; count: number }[];
-  topPages: { path: string; count: number }[];
-  topEvents?: { name: string; count: number }[];
-};
+import { useCallback, useEffect, useState } from "react";
+type Stats = { views7d: number; views30d: number; leads30d: number; contactRatePer100: number; inquiryStarts30d: number; qualifiedLeads30d: number; dailyViews: { day: string; count: number }[]; topPages: { path: string; count: number }[]; topEvents?: { name: string; count: number }[]; pipeline: { stage: string; count: number }[] };
 
 export default function AnalyticsPage() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/analytics", { cache: "no-store" })
-      .then(async (r) => { if (!r.ok) throw new Error(`Analytics failed (${r.status})`); return r.json(); })
-      .then((d) => { setStats(d); setLoading(false); })
-      .catch((e) => { setError(e instanceof Error ? e.message : "Load failed"); setLoading(false); });
+  const [stats,setStats] = useState<Stats | null>(null);
+  const [error,setError] = useState("");
+  const [loading,setLoading] = useState(false);
+  const load = useCallback(async () => {
+    setLoading(true); setError("");
+    try { const r = await fetch("/api/analytics", { cache: "no-store" }); if (!r.ok) throw new Error("Analytics could not load. Try again."); setStats(await r.json()); }
+    catch(e) { setError(e instanceof Error ? e.message : "Could not load analytics."); }
+    finally { setLoading(false); }
   }, []);
-
-  const maxViews = stats?.dailyViews.length ? Math.max(...stats.dailyViews.map((d) => d.count), 1) : 1;
-
-  return (
-    <div className="flex h-full flex-col overflow-hidden">
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-outline-variant px-4 py-4 lg:px-12">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-secondary">Acquisition / Usage metrics</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight">ANALYTICS</h1>
-        </div>
-      </header>
-
-      <section className="flex-1 overflow-y-auto p-4 lg:p-8">
-        <div className="mx-auto max-w-[1200px]">
-          {loading ? <p className="py-16 text-center font-mono text-xs uppercase text-secondary">Loading…</p> : error ? <p role="alert" className="border border-error px-4 py-3 text-sm text-error">{error}</p> : stats && (
-            <>
-              <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3">
-                {[
-                  { label: "Views · 7 days", value: stats.views7d, sub: "Short-term demand" },
-                  { label: "Views · 30 days", value: stats.views30d, sub: "Discovery reach" },
-                  { label: "Leads · 30 days", value: stats.leads30d, sub: `${stats.conversion30d}% visitor → lead` },
-                  { label: "Total views", value: stats.totalViews, sub: "All time" },
-                  { label: "Total leads", value: stats.totalContacts, sub: "Pipeline entries" },
-                  { label: "Unread leads", value: stats.unreadContacts, sub: "Needs reply" },
-                ].map((card) => (
-                  <div key={card.label} className="border border-outline-variant bg-surface p-5">
-                    <div className="mb-2 text-[11px] uppercase tracking-widest text-secondary">{card.label}</div>
-                    <div className="text-4xl font-semibold leading-none">{card.value}</div>
-                    <div className="mt-2 font-mono text-[11px] text-secondary">{card.sub}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mb-8 border border-outline-variant bg-surface p-5 lg:p-8">
-                <div className="mb-6 text-[12px] uppercase tracking-widest text-secondary">Daily views · last 14 days (zeros included)</div>
-                <div className="flex h-32 items-end gap-1 lg:gap-2">
-                  {stats.dailyViews.map((d) => (
-                    <div key={d.day} className="flex flex-1 flex-col items-center gap-1">
-                      <div className="w-full bg-primary" style={{ height: `${(d.count / maxViews) * 100}%`, minHeight: d.count ? "4px" : "2px", opacity: d.count ? 1 : 0.25 }} title={`${d.day}: ${d.count}`} />
-                      <span className="hidden font-mono text-[9px] text-secondary md:block">{d.day.slice(5)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-6 lg:grid-cols-2">
-                <div className="border border-outline-variant bg-surface">
-                  <div className="border-b border-outline-variant px-6 py-4 text-[12px] uppercase tracking-widest text-secondary">Top events · 30 days</div>
-                  {stats.topEvents?.length ? (
-                    <table className="w-full"><tbody className="divide-y divide-outline-variant">
-                      {stats.topEvents.map((e) => <tr key={e.name}><td className="px-6 py-3 font-mono text-[13px]">{e.name}</td><td className="px-6 py-3 text-right font-medium">{e.count}</td></tr>)}
-                    </tbody></table>
-                  ) : <p className="p-6 font-mono text-xs uppercase text-secondary">No events yet.</p>}
-                </div>
-                <div className="border border-outline-variant bg-surface">
-                  <div className="border-b border-outline-variant px-6 py-4 text-[12px] uppercase tracking-widest text-secondary">Top pages · 30 days</div>
-                  {stats.topPages.length ? (
-                    <table className="w-full"><tbody className="divide-y divide-outline-variant">
-                      {stats.topPages.map((p) => <tr key={p.path}><td className="px-6 py-3 font-mono text-[13px]">{p.path}</td><td className="px-6 py-3 text-right font-medium">{p.count}</td></tr>)}
-                    </tbody></table>
-                  ) : <p className="p-6 font-mono text-xs uppercase text-secondary">No page data yet.</p>}
-                </div>
-              </div>
-
-              {stats.pipeline.length > 0 && (
-                <div className="mt-6 border border-outline-variant bg-surface p-5 lg:p-8">
-                  <div className="mb-4 text-[12px] uppercase tracking-widest text-secondary">Lead pipeline distribution</div>
-                  <div className="flex flex-wrap gap-2">
-                    {stats.pipeline.map((row) => <span key={row.stage} className="border border-outline-variant px-4 py-2 font-mono text-xs uppercase">{row.stage}: {row.count}</span>)}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { void load(); }, [load]);
+  const max = Math.max(1,...(stats?.dailyViews.map(day=>day.count) ?? []));
+  return <div className="ws-page ws-stack"><header className="ws-page-header"><div><h1>Analytics</h1><p>Understand website activity and incoming work. Counts are pageviews, not unique visitors.</p></div><button className="ws-button" disabled={loading} onClick={load}>{loading ? "Refreshing…" : "Refresh"}</button></header>
+    <div role="alert">{error}</div>{!stats && loading && <div className="ws-skeleton" aria-label="Loading analytics" aria-busy="true" />}
+    {stats && <>
+      <div className="ws-metrics">{[{ label:"Page views / 30 days",value:stats.views30d },{ label:"Inquiries / 30 days",value:stats.leads30d },{ label:"Inquiries per 100 views",value:stats.contactRatePer100 },{ label:"Qualified / 30 days",value:stats.qualifiedLeads30d }].map(metric=><div className="ws-metric" key={metric.label}><p>{metric.label}</p><strong>{metric.value.toLocaleString()}</strong></div>)}</div>
+      <section className="ws-card"><div className="ws-section-heading"><h2>Daily page views</h2><span className="ws-muted">Last 14 days</span></div>
+        <div className="ws-chart" aria-hidden="true">{stats.dailyViews.map(day=><div key={day.day}><div className="ws-chart-bar" style={{ height: `${Math.max(2,day.count/max*125)}px` }} title={`${day.day}: ${day.count}`} /><label>{day.day.slice(5)}</label></div>)}</div>
+        <details className="mt-6"><summary>View daily numbers</summary><table className="w-full"><caption className="sr-only">Daily page views for the last 14 days</caption><thead><tr><th scope="col">Date</th><th scope="col">Views</th></tr></thead><tbody>{stats.dailyViews.map(day=><tr key={day.day}><th scope="row">{day.day}</th><td>{day.count}</td></tr>)}</tbody></table></details>
       </section>
-    </div>
-  );
+      <div className="ws-columns"><section className="ws-card"><h2>Popular pages</h2><ul className="ws-list">{stats.topPages.map(page=><li key={page.path} className="ws-list-item"><span>{page.path}</span><strong>{page.count.toLocaleString()}</strong></li>)}</ul>{!stats.topPages.length && <p className="ws-muted mt-4">No page activity in the last 30 days.</p>}</section>
+        <section className="ws-card"><h2>Conversion activity</h2><p className="ws-muted mt-2">Last 30 days. Archived inquiries are excluded from conversion counts.</p><dl className="ws-list"><div className="ws-list-item"><dt>Contact form starts</dt><dd>{stats.inquiryStarts30d}</dd></div><div className="ws-list-item"><dt>Received inquiries</dt><dd>{stats.leads30d}</dd></div><div className="ws-list-item"><dt>Page views / last 7 days</dt><dd>{stats.views7d}</dd></div></dl></section></div>
+      <section className="ws-card"><h2>Tracked events</h2><ul className="ws-list">{stats.topEvents?.map(event=><li className="ws-list-item" key={event.name}><code className="break-all">{event.name}</code><strong>{event.count}</strong></li>)}</ul>{!stats.topEvents?.length && <p className="ws-muted mt-4">No tracked events in the last 30 days.</p>}</section>
+    </>}
+  </div>;
 }

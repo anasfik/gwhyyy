@@ -1,15 +1,14 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { isAdminAuthorized } from "@/lib/admin-auth";
+import { countLiveContacts, contactRatePer100 } from "@/lib/analytics";
 import { getDb } from "@/lib/db";
 
 type CountRow = { c: number };
 type DayRow = { day: string; count: number };
 type PageRow = { path: string; count: number };
 
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(req: NextRequest) {
+  if (!(await isAdminAuthorized(req))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const db = getDb();
 
@@ -20,10 +19,12 @@ export async function GET() {
   const views30d = (db.prepare(
     "SELECT COUNT(*) as c FROM page_views WHERE created_at >= datetime('now', '-30 days')"
   ).get() as CountRow).c;
-  const totalContacts = (db.prepare("SELECT COUNT(*) as c FROM contacts").get() as CountRow).c;
+  const totalContacts = countLiveContacts(db);
   const unreadContacts = (db.prepare("SELECT COUNT(*) as c FROM contacts WHERE status = 'unread'").get() as CountRow).c;
-  const leads30d = (db.prepare("SELECT COUNT(*) as c FROM contacts WHERE created_at >= datetime('now', '-30 days')").get() as CountRow).c;
+  const leads30d = countLiveContacts(db, 30);
   const pipeline = db.prepare("SELECT lead_stage as stage, COUNT(*) as count FROM contacts GROUP BY lead_stage").all() as { stage: string; count: number }[];
+  const inquiryStarts30d = (db.prepare("SELECT COUNT(*) as c FROM events WHERE name = 'inquiry_start' AND created_at >= datetime('now', '-30 days')").get() as CountRow).c;
+  const qualifiedLeads30d = (db.prepare("SELECT COUNT(*) as c FROM contacts WHERE lead_stage = 'qualified' AND created_at >= datetime('now', '-30 days')").get() as CountRow).c;
 
   const rawDays = db.prepare(`
     SELECT date(created_at) as day, COUNT(*) as count
@@ -61,7 +62,9 @@ export async function GET() {
     totalContacts,
     unreadContacts,
     leads30d,
-    conversion30d: views30d ? Math.round((leads30d / views30d) * 1000) / 10 : 0,
+    contactRatePer100: contactRatePer100(leads30d, views30d),
+    inquiryStarts30d,
+    qualifiedLeads30d,
     pipeline,
     dailyViews,
     topPages,

@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CopyFields, { setAtPath } from "@/components/dashboard/CopyFields";
 import type { SiteConfig } from "@/config/site";
+import Link from "next/link";
+import { useConfirmation } from "./WorkspaceUI";
+import { useContentDraft, type LoadedContent } from "./ContentDraft";
 
-type Revision = { id: number; version: number; created_at: string };
-type Loaded = { content: SiteConfig; version: number; updatedAt: string; revisions: Revision[]; warnings?: { weakAdminPassword: boolean } };
+type Loaded = LoadedContent;
 
 const TABS = [
   { id: "site", label: "Site & Identity" },
@@ -24,18 +26,21 @@ function slugify(value: string) {
 }
 
 function listToText(list: string[]) { return list.join(", "); }
-function textToList(value: string) { return value.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 40); }
-function linesToList(value: string) { return value.split("\n").map((s) => s.trim()).filter(Boolean).slice(0, 40); }
+function textToList(value: string) { return value.split(",").map((s) => s.trim()).slice(0, 40); }
+function linesToList(value: string) { return value.split("\n").slice(0, 40); }
 function listToLines(list: string[]) { return list.join("\n"); }
 
 export default function ContentManager({ initialTab = "site" }: { initialTab?: TabId }) {
-  const [tab, setTab] = useState<TabId>(initialTab);
-  const [loaded, setLoaded] = useState<Loaded | null>(null);
-  const [draft, setDraft] = useState<SiteConfig | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const tab = initialTab;
+  const { state, setState, saving, setSaving } = useContentDraft();
+  const { loaded, draft } = state;
+  const setLoaded = useCallback((loaded: Loaded) => setState(current => ({ ...current, loaded })), [setState]);
+  const setDraft = useCallback((update: SiteConfig | ((previous: SiteConfig | null) => SiteConfig | null)) => setState(current => ({ ...current, draft: typeof update === "function" ? update(current.draft) : update })), [setState]);
+  const confirm = useConfirmation();
+  const [loading, setLoading] = useState(!loaded);
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [projectIndex, setProjectIndex] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -52,15 +57,17 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setLoaded, setDraft]);
 
   useEffect(() => {
     // Initial remote content belongs to this effect; load resolves asynchronously.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
+    if (!loaded) void load();
+  }, [load, loaded]);
 
   const dirty = useMemo(() => loaded && draft ? JSON.stringify(loaded.content) !== JSON.stringify(draft) : false, [loaded, draft]);
+  const discardAndReload = async () => { if (dirty && !await confirm({ title: "Discard unpublished changes?", description: "Reloading replaces all unsaved website edits with the published version.", action: "Discard and reload", danger: true })) return; await load(); };
+  const pageTitle = TABS.find(item => item.id === tab)?.label ?? "Website";
 
   const weakPassword = loaded?.warnings?.weakAdminPassword ?? false;
 
@@ -80,7 +87,8 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? `Save failed (${res.status})`);
-      setLoaded({ content: structuredClone(data.content ?? draft), version: data.version, updatedAt: data.updatedAt, revisions: data.revisions ?? loaded.revisions });
+      const metadata = await fetch("/api/content", { cache: "no-store" }).then(async response => response.ok ? await response.json() as Loaded : null).catch(() => null);
+      setLoaded({ ...loaded, content: structuredClone(data.content ?? draft), version: data.version, updatedAt: data.updatedAt, revisions: metadata?.revisions ?? loaded.revisions, warnings: metadata?.warnings ?? loaded.warnings });
       setDraft(structuredClone(data.content ?? draft));
       setSavedAt(new Date().toISOString());
     } catch (e) {
@@ -91,7 +99,7 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
   };
 
   const restore = async (revisionId: number) => {
-    if (!loaded || !confirm("Restore this revision? Current content becomes a new revision first.")) return;
+    if (!loaded || !await confirm({ title: "Restore this published revision?", description: "The current published version is preserved as a revision. Any unpublished edits will be discarded.", action: "Restore revision", danger: true })) return;
     setSaving(true);
     setError(null);
     try {
@@ -102,7 +110,7 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Restore failed");
-      setLoaded({ content: structuredClone(data.content), version: data.version, updatedAt: data.updatedAt, revisions: loaded.revisions });
+      setLoaded({ ...loaded, content: structuredClone(data.content), version: data.version, updatedAt: data.updatedAt });
       setDraft(structuredClone(data.content));
       await load();
     } catch (e) {
@@ -114,25 +122,28 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
 
   if (loading) return <Shell title="SITE_CONTENT"><p className="py-16 text-center font-mono text-xs uppercase text-secondary">Loading live content…</p></Shell>;
   if (!loaded || !draft) return <Shell title="SITE_CONTENT"><p className="py-16 text-center text-sm text-error">{error ?? "No content"}</p><button onClick={load} className="mx-auto mt-6 block border border-outline-variant px-6 py-3 text-xs uppercase tracking-widest">Retry</button></Shell>;
+  const updateProject = (index: number, patch: Partial<SiteConfig["projects"][number]>) => set("projects", draft.projects.map((project, i) => i === index ? { ...project, ...patch } : project));
 
   return (
-    <Shell title="SITE_CONTENT" right={
+    <Shell title={pageTitle} right={
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-mono text-[11px] text-secondary">v{loaded.version} · {dirty ? "UNSAVED" : "SYNCED"}</span>
-        <button onClick={load} className="border border-outline-variant px-4 py-2 text-[11px] uppercase tracking-widest hover:bg-surface-container-high">Reload</button>
-        <button onClick={save} disabled={!dirty || saving} className="bg-primary px-5 py-2 text-[11px] uppercase tracking-widest text-on-primary disabled:opacity-40">{saving ? "Saving…" : "Publish changes"}</button>
+        <button disabled={saving} onClick={() => void discardAndReload()} className="border border-outline-variant px-4 py-2 text-[11px] uppercase tracking-widest hover:bg-surface-container-high">Reload published</button>
+        <button onClick={async () => { if (await confirm({ title: "Publish all website edits?", description: "This publishes changes across every website section, not only the section on screen. The previous published version is kept as a revision.", action: "Publish website" })) await save(); }} disabled={!dirty || saving} className="bg-primary px-5 py-2 text-[11px] uppercase tracking-widest text-on-primary disabled:opacity-40">{saving ? "Publishing…" : "Publish changes"}</button>
       </div>
     }>
-      {error && <p role="alert" className="mb-4 border border-error px-4 py-3 text-sm text-error">{error}{error.includes("another session") && <button onClick={load} className="ml-3 underline">Reload latest</button>}</p>}
+      {error && <p role="alert" className="mb-4 border border-error px-4 py-3 text-sm text-error">{error}{error.includes("another session") && <button onClick={() => void discardAndReload()} className="ml-3 underline">Reload latest</button>}</p>}
       {savedAt && !dirty && <p role="status" className="mb-4 border border-green-600 px-4 py-3 text-sm text-green-700">Published. Public pages, /llms.txt, /llms.md, /profile.json, sitemap, and social cards now read this version.</p>}
 
-      <div className="mb-6 flex gap-1 overflow-x-auto border-b border-outline-variant" role="tablist" aria-label="Content sections">
+      <nav className="ws-mail-tabs" aria-label="Website sections">
         {TABS.map((t) => (
-          <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)} className={`whitespace-nowrap px-4 py-3 text-[11px] uppercase tracking-widest ${tab === t.id ? "bg-primary text-on-primary" : "text-secondary hover:bg-surface-container-high"}`}>
+          <Link key={t.id} aria-current={tab === t.id ? "page" : undefined} href={t.id === "site" ? "/dashboard/content" : t.id === "projects" ? "/dashboard/projects" : t.id === "publish" ? "/dashboard/settings" : `/dashboard/content/${t.id}`} data-content-navigation>
             {t.label}
-          </button>
+          </Link>
         ))}
-      </div>
+      </nav>
+      <p className="text-sm text-secondary mb-6">{dirty ? "You have unpublished website changes. They stay with you while switching sections." : `Editing published version ${loaded.version}. Changes go live only when you publish.`}</p>
+      <fieldset disabled={saving} className="min-w-0">
 
       {tab === "site" && (
         <div className="grid gap-6 lg:grid-cols-2">
@@ -195,45 +206,48 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
       {tab === "projects" && (
         <div className="grid gap-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-secondary">{draft.projects.length} projects · order controls homepage + /projects + case-study order</p>
+            <p className="text-sm text-secondary">{draft.projects.length} projects · order controls homepage + /work + case-study order</p>
             <button onClick={() => {
               const order = Math.max(0, ...draft.projects.map((p) => p.order)) + 1;
               set("projects", [...draft.projects, { slug: `new-project-${order}`, name: "New project", category: "AI Product", summary: "", problem: "", approach: "", ownership: [""], results: [""], stack: [""], link: "https://example.com", signal: "", featured: true, order, architecture: ["Input", "System", "Output"] }]);
+              setProjectIndex(draft.projects.length);
             }} className="bg-primary px-5 py-2 text-[11px] uppercase tracking-widest text-on-primary">Add project</button>
           </div>
-          {[...draft.projects].sort((a, b) => a.order - b.order).map((project) => (
-            <Card key={project.slug} title={`${String(project.order).padStart(2, "0")} · ${project.name}`}>
+          <label className="ws-field mb-6 max-w-xl">Project to edit<select value={projectIndex} onChange={event => setProjectIndex(Number(event.target.value))}>{draft.projects.map((project,i)=><option key={i} value={i}>{project.name} / position {project.order}</option>)}</select></label>
+          {draft.projects.map((project, i) => i !== projectIndex ? null : (
+            <Card key={i} title={project.name}>
               <div className="grid gap-4 lg:grid-cols-2">
-                <Field label="Name"><input value={project.name} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, name: e.target.value, slug: p.slug.startsWith("new-project") ? slugify(e.target.value) : p.slug } : p))} /></Field>
-                <Field label="Slug"><input value={project.slug} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, slug: slugify(e.target.value) } : p))} /></Field>
+                <Field label="Name"><input value={project.name} onChange={(e) => updateProject(i, { name: e.target.value })} /></Field>
+                <Field label="Slug"><input value={project.slug} onChange={(e) => updateProject(i, { slug: e.target.value })} onBlur={e=>updateProject(i, { slug: slugify(e.target.value) })} /></Field>
               </div>
               <div className="grid gap-4 lg:grid-cols-3">
-                <Field label="Category"><input value={project.category} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, category: e.target.value } : p))} /></Field>
-                <Field label="Signal"><input value={project.signal ?? ""} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, signal: e.target.value } : p))} /></Field>
-                <Field label="External URL"><input value={project.link} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, link: e.target.value } : p))} /></Field>
+                <Field label="Category"><input value={project.category} onChange={(e) => updateProject(i, { category: e.target.value })} /></Field>
+                <Field label="Signal"><input value={project.signal ?? ""} onChange={(e) => updateProject(i, { signal: e.target.value })} /></Field>
+                <Field label="External URL"><input value={project.link} onChange={(e) => updateProject(i, { link: e.target.value })} /></Field>
               </div>
-              <Field label="Summary"><textarea rows={2} value={project.summary} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, summary: e.target.value } : p))} /></Field>
+              <Field label="Summary"><textarea rows={2} value={project.summary} onChange={(e) => updateProject(i, { summary: e.target.value })} /></Field>
               <div className="grid gap-4 lg:grid-cols-2">
-                <Field label="Problem"><textarea rows={3} value={project.problem} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, problem: e.target.value } : p))} /></Field>
-                <Field label="Approach"><textarea rows={3} value={project.approach} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, approach: e.target.value } : p))} /></Field>
+                <Field label="Problem"><textarea rows={3} value={project.problem} onChange={(e) => updateProject(i, { problem: e.target.value })} /></Field>
+                <Field label="Approach"><textarea rows={3} value={project.approach} onChange={(e) => updateProject(i, { approach: e.target.value })} /></Field>
               </div>
               <div className="grid gap-4 lg:grid-cols-2">
-                <Field label="Ownership (one per line)"><textarea rows={3} value={listToLines(project.ownership)} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, ownership: linesToList(e.target.value) } : p))} /></Field>
-                <Field label="Results (one per line)"><textarea rows={3} value={listToLines(project.results)} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, results: linesToList(e.target.value) } : p))} /></Field>
+                <Field label="Ownership (one per line)"><textarea rows={3} value={listToLines(project.ownership)} onChange={(e) => updateProject(i, { ownership: linesToList(e.target.value) })} /></Field>
+                <Field label="Results (one per line)"><textarea rows={3} value={listToLines(project.results)} onChange={(e) => updateProject(i, { results: linesToList(e.target.value) })} /></Field>
               </div>
               <div className="grid gap-4 lg:grid-cols-3">
-                <Field label="Stack (comma separated)"><input value={listToText(project.stack)} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, stack: textToList(e.target.value) } : p))} /></Field>
-                <Field label="Architecture nodes (comma separated)"><input value={listToText(project.architecture)} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, architecture: textToList(e.target.value) } : p))} /></Field>
-                <Field label="Order"><input type="number" value={project.order} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, order: Number(e.target.value) || 0 } : p))} /></Field>
+                <Field label="Stack (comma separated)"><input value={listToText(project.stack)} onChange={(e) => updateProject(i, { stack: textToList(e.target.value) })} /></Field>
+                <Field label="Architecture nodes (comma separated)"><input value={listToText(project.architecture)} onChange={(e) => updateProject(i, { architecture: textToList(e.target.value) })} /></Field>
+                <Field label="Order"><input type="number" value={project.order} onChange={(e) => updateProject(i, { order: Number(e.target.value) || 0 })} /></Field>
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
-                <label className="flex items-center gap-2 text-xs uppercase tracking-widest"><input type="checkbox" checked={project.featured} onChange={(e) => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, featured: e.target.checked } : p))} className="h-4 w-4" /> Featured</label>
+                <label className="flex items-center gap-2 text-xs uppercase tracking-widest"><input type="checkbox" checked={project.featured} onChange={(e) => updateProject(i, { featured: e.target.checked })} className="h-4 w-4" /> Featured</label>
                 <span className="flex-1" />
-                <button onClick={() => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, order: p.order - 1 } : p))} className="border border-outline-variant px-3 py-1 text-xs">Move up</button>
-                <button onClick={() => set("projects", draft.projects.map((p) => p.slug === project.slug ? { ...p, order: p.order + 1 } : p))} className="border border-outline-variant px-3 py-1 text-xs">Move down</button>
-                <button onClick={() => { if (confirm(`Delete ${project.name}?`)) set("projects", draft.projects.filter((p) => p.slug !== project.slug)); }} className="border border-error px-3 py-1 text-xs text-error">Delete</button>
-                <a href={`/projects/${project.slug}`} target="_blank" rel="noopener noreferrer" className="border border-outline-variant px-3 py-1 text-xs">Preview ↗</a>
+                <button onClick={() => updateProject(i, { order: project.order - 1 })} className="border border-outline-variant px-3 py-1 text-xs">Move up</button>
+                <button onClick={() => updateProject(i, { order: project.order + 1 })} className="border border-outline-variant px-3 py-1 text-xs">Move down</button>
+                <button onClick={async () => { if (await confirm({ title: `Remove ${project.name}?`, description: "This removes the project from your unpublished website draft. It takes effect only when you publish.", action: "Remove project", danger: true })) { set("projects", draft.projects.filter((_,j) => j !== i)); setProjectIndex(0); } }} className="border border-error px-3 py-1 text-xs text-error">Remove project</button>
+                <a href={`/work/${project.slug}`} target="_blank" rel="noopener noreferrer" className="border border-outline-variant px-3 py-1 text-xs">Preview ↗</a>
               </div>
+              <details><summary>Case study content and images</summary><div className="mt-4 grid gap-5"><CopyFields value={project.sections ?? []} itemTemplate={{ title: "", body: [""] }} path={["sections"]} onChange={value=>updateProject(i, { sections: value as typeof project.sections })} /><CopyFields value={project.media ?? []} itemTemplate={{ src: "", alt: "", width: 1600, height: 1000 }} path={["media"]} onChange={value=>updateProject(i, { media: value as typeof project.media })} /></div></details>
             </Card>
           ))}
         </div>
@@ -242,12 +256,19 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
       {tab === "services" && (
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="grid gap-6 content-start">
-            <div className="flex items-center justify-between"><h3 className="text-sm uppercase tracking-widest text-secondary">Services</h3><button onClick={() => set("capabilities", [...draft.capabilities, { title: "New service", summary: "", outcomes: [] }])} className="border border-outline-variant px-3 py-1 text-xs uppercase">Add</button></div>
+            <div className="flex items-center justify-between"><h3 className="text-sm uppercase tracking-widest text-secondary">Services</h3><button onClick={() => set("capabilities", [...draft.capabilities, { slug: `service-${Date.now()}`, title: "New service", summary: "", detail: [], outcomes: [], examples: [], fit: [], relatedProjects: [] }])} className="border border-outline-variant px-3 py-1 text-xs uppercase">Add</button></div>
             {draft.capabilities.map((cap, i) => (
-              <Card key={`${cap.title}-${i}`} title={cap.title || `Service ${i + 1}`}>
-                <Field label="Title"><input value={cap.title} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, title: e.target.value } : c))} /></Field>
+              <Card key={i} title={cap.title || `Service ${i + 1}`}>
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <Field label="Title"><input value={cap.title} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, title: e.target.value } : c))} /></Field>
+                  <Field label="Slug"><input value={cap.slug} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, slug: slugify(e.target.value) } : c))} /></Field>
+                </div>
                 <Field label="Summary"><textarea rows={2} value={cap.summary} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, summary: e.target.value } : c))} /></Field>
-                <Field label="Outcomes (one per line)"><textarea rows={3} value={listToLines(cap.outcomes)} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, outcomes: linesToList(e.target.value) } : c))} /></Field>
+                <Field label="Detail paragraphs (one per line)"><textarea rows={3} value={listToLines(cap.detail)} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, detail: linesToList(e.target.value) } : c))} /></Field>
+                <Field label="Outcomes (one per line)"><textarea rows={4} value={listToLines(cap.outcomes)} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, outcomes: linesToList(e.target.value) } : c))} /></Field>
+                <Field label="Example engagements (one per line)"><textarea rows={3} value={listToLines(cap.examples)} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, examples: linesToList(e.target.value) } : c))} /></Field>
+                <Field label="Good fit if (one per line)"><textarea rows={3} value={listToLines(cap.fit)} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, fit: linesToList(e.target.value) } : c))} /></Field>
+                <Field label="Related project slugs (comma separated)"><input value={listToText(cap.relatedProjects)} onChange={(e) => set("capabilities", draft.capabilities.map((c, j) => j === i ? { ...c, relatedProjects: textToList(e.target.value) } : c))} /></Field>
                 <button onClick={() => set("capabilities", draft.capabilities.filter((_, j) => j !== i))} className="text-xs uppercase tracking-widest text-error">Remove service</button>
               </Card>
             ))}
@@ -258,7 +279,7 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
             </Card>
             <Card title="Stack groups">
               {draft.stackGroups.map((group, i) => (
-                <div key={`${group.label}-${i}`} className="mb-4 grid gap-2">
+                <div key={i} className="mb-4 grid gap-2">
                   <input aria-label={`Stack group ${i + 1} label`} value={group.label} onChange={(e) => set("stackGroups", draft.stackGroups.map((g, j) => j === i ? { ...g, label: e.target.value } : g))} />
                   <input aria-label={`Stack group ${i + 1} items`} value={listToText(group.items)} onChange={(e) => set("stackGroups", draft.stackGroups.map((g, j) => j === i ? { ...g, items: textToList(e.target.value) } : g))} />
                   <button onClick={() => set("stackGroups", draft.stackGroups.filter((_, j) => j !== i))} className="self-start text-xs uppercase tracking-widest text-error">Remove group</button>
@@ -268,7 +289,7 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
             </Card>
             <Card title="Process steps">
               {draft.process.map((step, i) => (
-                <div key={step.step} className="mb-4 grid gap-2 border-b border-outline-variant pb-4">
+                <div key={i} className="mb-4 grid gap-2 border-b border-outline-variant pb-4">
                   <div className="grid grid-cols-[64px_1fr] gap-2">
                     <input aria-label={`Step ${i + 1} number`} value={step.step} onChange={(e) => set("process", draft.process.map((s, j) => j === i ? { ...s, step: e.target.value } : s))} />
                     <input aria-label={`Step ${i + 1} title`} value={step.title} onChange={(e) => set("process", draft.process.map((s, j) => j === i ? { ...s, title: e.target.value } : s))} />
@@ -308,7 +329,7 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
           <div className="grid gap-6 content-start">
             <div className="flex items-center justify-between"><h3 className="text-sm uppercase tracking-widest text-secondary">FAQ</h3><button onClick={() => set("faq", [...draft.faq, { question: "New question", answer: "" }])} className="border border-outline-variant px-3 py-1 text-xs uppercase">Add</button></div>
             {draft.faq.map((item, i) => (
-              <Card key={`${item.question}-${i}`} title={item.question || `Question ${i + 1}`}>
+              <Card key={i} title={item.question || `Question ${i + 1}`}>
                 <Field label="Question"><input value={item.question} onChange={(e) => set("faq", draft.faq.map((f, j) => j === i ? { ...f, question: e.target.value } : f))} /></Field>
                 <Field label="Answer"><textarea rows={3} value={item.answer} onChange={(e) => set("faq", draft.faq.map((f, j) => j === i ? { ...f, answer: e.target.value } : f))} /></Field>
                 <button onClick={() => set("faq", draft.faq.filter((_, j) => j !== i))} className="text-xs uppercase tracking-widest text-error">Remove</button>
@@ -324,9 +345,6 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
               <Field label="Keywords (comma separated)"><input value={listToText([...draft.seo.keywords])} onChange={(e) => set("seo", { ...draft.seo, keywords: textToList(e.target.value) })} /></Field>
               <Field label="Twitter handle"><input value={draft.seo.twitterHandle} onChange={(e) => set("seo", { ...draft.seo, twitterHandle: e.target.value })} /></Field>
             </Card>
-            <Card title="Budget options (contact form allowlist)">
-              <Field label="One per line"><textarea rows={5} value={listToLines([...draft.budgetOptions])} onChange={(e) => set("budgetOptions", linesToList(e.target.value))} /></Field>
-            </Card>
           </div>
         </div>
       )}
@@ -340,7 +358,7 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
           )}
           <Card title="Live outputs">
             <ul className="grid gap-2 text-sm">
-              {[["Homepage", "/"], ["Work index", "/projects"], ["Hire page", "/hire"], ["Resume", "/resume"], ["LLM index", "/llms.txt"], ["Full AI profile", "/llms.md"], ["Structured profile", "/profile.json"], ["Sitemap", "/sitemap.xml"], ["Robots", "/robots.txt"], ["Social card", "/opengraph-image"]].map(([label, href]) => (
+              {[["Homepage", "/"], ["Work index", "/work"], ["Services", "/services"], ["Contact", "/contact"], ["Resume", "/resume"], ["LLM index", "/llms.txt"], ["Full AI profile", "/llms.md"], ["Structured profile", "/profile.json"], ["Sitemap", "/sitemap.xml"], ["Robots", "/robots.txt"], ["Social card", "/opengraph-image"]].map(([label, href]) => (
                 <li key={href} className="flex items-center justify-between border-b border-outline-variant py-2"><span>{label}</span><a href={href} target="_blank" rel="noopener noreferrer" className="text-xs uppercase tracking-widest underline">Open ↗</a></li>
               ))}
             </ul>
@@ -358,6 +376,7 @@ export default function ContentManager({ initialTab = "site" }: { initialTab?: T
           </Card>
         </div>
       )}
+      </fieldset>
     </Shell>
   );
 }
@@ -377,7 +396,7 @@ function Shell({ title, right, children }: { title: string; right?: React.ReactN
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border border-outline-variant bg-surface p-4 lg:p-6">
-      <h3 className="mb-4 text-[12px] uppercase tracking-[0.1em] text-secondary">{title}</h3>
+      <h2 className="mb-4">{title}</h2>
       <div className="grid gap-4">{children}</div>
     </section>
   );

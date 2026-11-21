@@ -1,109 +1,39 @@
 import Link from "next/link";
 import { getDb } from "@/lib/db";
-import { getProjects, getSiteContentRecord } from "@/lib/site-content";
+import { getSiteContentRecord } from "@/lib/site-content";
 
 export const dynamic = "force-dynamic";
 
 export default function DashboardOverview() {
   const db = getDb();
+  const count = (sql: string) => (db.prepare(sql).get() as { n: number }).n;
+  const unread = count("SELECT count(*) n FROM contacts WHERE status='unread'");
+  const due = count("SELECT count(*) n FROM prospects WHERE follow_up_at<=date('now') AND stage NOT IN ('won','lost','archived')");
+  const drafts = count("SELECT count(*) n FROM outreach_mail WHERE status IN ('draft','approved') AND attempted_at IS NULL");
+  const attempts = count("SELECT count(*) n FROM outreach_mail WHERE attempted_at>=date('now')");
+  const views = count("SELECT count(*) n FROM page_views WHERE created_at>=datetime('now','-7 days')");
+  const recent = db.prepare("SELECT id,name,email,service,created_at,status FROM contacts WHERE status!='archived' ORDER BY created_at DESC LIMIT 5").all() as { id: number; name: string; email: string; service: string; created_at: string; status: string }[];
+  const pending = db.prepare("SELECT id,recipient,subject,status FROM outreach_mail WHERE attempted_at IS NULL ORDER BY id DESC LIMIT 4").all() as { id: number; recipient: string; subject: string; status: string }[];
   const { content, version, updatedAt } = getSiteContentRecord();
-  const projects = getProjects(content);
-  const totalViews = (db.prepare("SELECT COUNT(*) as c FROM page_views").get() as { c: number }).c;
-  const views7d = (db.prepare("SELECT COUNT(*) as c FROM page_views WHERE created_at >= datetime('now', '-7 days')").get() as { c: number }).c;
-  const totalLeads = (db.prepare("SELECT COUNT(*) as c FROM contacts").get() as { c: number }).c;
-  const unread = (db.prepare("SELECT COUNT(*) as c FROM contacts WHERE status = 'unread'").get() as { c: number }).c;
-  const pipeline = db.prepare("SELECT lead_stage as stage, COUNT(*) as count FROM contacts GROUP BY lead_stage ORDER BY count DESC").all() as { stage: string; count: number }[];
-  const recent = db.prepare("SELECT id, name, email, budget, lead_stage, created_at FROM contacts ORDER BY created_at DESC LIMIT 5").all() as { id: number; name: string; email: string; budget: string; lead_stage: string; created_at: string }[];
-  const topEvents = db.prepare("SELECT name, COUNT(*) as count FROM events WHERE created_at >= datetime('now', '-30 days') GROUP BY name ORDER BY count DESC LIMIT 6").all() as { name: string; count: number }[];
-
-  const cards = [
-    { label: "Views · 7 days", value: views7d, href: "/dashboard/analytics" },
-    { label: "Total views", value: totalViews, href: "/dashboard/analytics" },
-    { label: "Total leads", value: totalLeads, href: "/dashboard/messages" },
-    { label: "Unread leads", value: unread, href: "/dashboard/messages?status=unread" },
-  ];
-
-  return (
-    <div className="flex h-full flex-col overflow-hidden">
-      <header className="flex flex-shrink-0 flex-wrap items-center justify-between gap-3 border-b border-outline-variant px-4 py-4 lg:px-12">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-secondary">Client acquisition / Command center</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight">OVERVIEW</h1>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/dashboard/content" className="bg-primary px-4 py-2 text-[11px] uppercase tracking-widest text-on-primary">Edit site</Link>
-          <Link href="/" target="_blank" rel="noopener noreferrer" className="border border-outline-variant px-4 py-2 text-[11px] uppercase tracking-widest">View live ↗</Link>
-        </div>
-      </header>
-      <section className="flex-1 overflow-y-auto p-4 lg:p-8">
-        <div className="mx-auto grid max-w-[1200px] gap-6">
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {cards.map((card) => (
-              <Link key={card.label} href={card.href} className="border border-outline-variant bg-surface p-5 hover:bg-surface-container-high">
-                <p className="text-[11px] uppercase tracking-widest text-secondary">{card.label}</p>
-                <p className="mt-2 text-4xl font-semibold tracking-tight">{card.value}</p>
-              </Link>
-            ))}
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-3">
-            <div className="border border-outline-variant bg-surface p-6 lg:col-span-2">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-[12px] uppercase tracking-widest text-secondary">Latest leads</h2>
-                <Link href="/dashboard/messages" className="text-[11px] uppercase tracking-widest underline">Open inbox</Link>
-              </div>
-              {recent.length === 0 ? <p className="text-sm text-secondary">No leads yet. Share /hire and #contact to start pipeline.</p> : (
-                <ul className="divide-y divide-outline-variant">
-                  {recent.map((lead) => (
-                    <li key={lead.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
-                      <span><strong>{lead.name}</strong> <span className="text-secondary">· {lead.email}</span></span>
-                      <span className="font-mono text-xs text-secondary">{lead.lead_stage} · {lead.budget || "no budget"} · {lead.created_at.slice(0, 10)}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-            <div className="grid gap-6 content-start">
-              <div className="border border-outline-variant bg-surface p-6">
-                <h2 className="mb-4 text-[12px] uppercase tracking-widest text-secondary">Pipeline</h2>
-                {pipeline.length === 0 ? <p className="text-sm text-secondary">No stages yet.</p> : (
-                  <ul className="grid gap-2 text-sm">
-                    {pipeline.map((row) => (
-                      <li key={row.stage} className="flex items-center justify-between border-b border-outline-variant py-1.5"><span className="uppercase">{row.stage}</span><strong>{row.count}</strong></li>
-                    ))}
-                  </ul>
-                )}
-                <Link href="/dashboard/messages" className="mt-4 inline-block text-[11px] uppercase tracking-widest underline">Qualify leads</Link>
-              </div>
-              <div className="border border-outline-variant bg-surface p-6">
-                <h2 className="mb-2 text-[12px] uppercase tracking-widest text-secondary">Live content</h2>
-                <p className="text-sm">v{version} · {projects.length} projects · updated {updatedAt}</p>
-                <p className="mt-1 text-sm text-secondary">{content.availability.available ? content.availability.label : "Currently unavailable"}</p>
-                <Link href="/dashboard/content" className="mt-4 inline-block text-[11px] uppercase tracking-widest underline">Open editor</Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="border border-outline-variant bg-surface p-6">
-              <h2 className="mb-4 text-[12px] uppercase tracking-widest text-secondary">Conversion events · 30 days</h2>
-              {topEvents.length === 0 ? <p className="text-sm text-secondary">No events yet.</p> : (
-                <ul className="grid gap-2 text-sm">
-                  {topEvents.map((e) => <li key={e.name} className="flex items-center justify-between border-b border-outline-variant py-1.5"><span className="font-mono text-[13px]">{e.name}</span><strong>{e.count}</strong></li>)}
-                </ul>
-              )}
-            </div>
-            <div className="border border-outline-variant bg-surface p-6">
-              <h2 className="mb-4 text-[12px] uppercase tracking-widest text-secondary">Bot & client discovery feeds</h2>
-              <ul className="grid gap-2 text-sm">
-                {[["/llms.txt", "AI crawler index"], ["/llms.md", "Full AI profile"], ["/profile.json", "Structured profile"], ["/sitemap.xml", "Search sitemap"]].map(([href, label]) => (
-                  <li key={href} className="flex items-center justify-between border-b border-outline-variant py-1.5"><span>{label}</span><a href={href} target="_blank" rel="noopener noreferrer" className="text-[11px] uppercase tracking-widest underline">{href} ↗</a></li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+  return <div className="ws-page ws-stack">
+    <header className="ws-page-header"><div><h1>A clear place to start.</h1><p>Review incoming work, keep conversations moving, and look after your website.</p></div><Link className="ws-button" href="/dashboard/mail">Review drafts</Link></header>
+    <div className="ws-metrics">{[
+      { label: "Unread inquiries", value: unread, href: "/dashboard/messages?status=unread" },
+      { label: "Follow-ups due", value: due, href: "/dashboard/prospects?due=1" },
+      { label: "Unsent drafts", value: drafts, href: "/dashboard/mail" },
+      { label: "Page views this week", value: views, href: "/dashboard/analytics" },
+    ].map(item => <Link key={item.label} href={item.href} className="ws-metric"><p>{item.label}</p><strong>{item.value.toLocaleString()}</strong></Link>)}</div>
+    <div className="ws-columns">
+      <section className="ws-card"><div className="ws-section-heading"><h2>Recent inquiries</h2><Link href="/dashboard/messages">View inquiries</Link></div>
+        {recent.length ? <ul className="ws-list">{recent.map(row => <li key={row.id}><Link href={`/dashboard/messages?q=${encodeURIComponent(row.email)}`} className="ws-list-item"><div><strong>{row.name}</strong><p>{row.service || "General inquiry"} / {row.created_at.slice(0,10)}</p></div><span className={`ws-badge ${row.status === "unread" ? "good" : ""}`}>{row.status}</span></Link></li>)}</ul> : <p className="ws-muted">No inquiries yet. Requests from your contact form will appear here.</p>}
       </section>
+      <section className="ws-card"><div className="ws-section-heading"><h2>Next up</h2></div><div className="ws-list">
+        <Link href="/dashboard/prospects?due=1" className="ws-list-item"><div><strong>Follow up with prospects</strong><p>{due ? `${due} records need your attention.` : "No follow-ups due today."}</p></div><span aria-hidden="true">→</span></Link>
+        <Link href="/dashboard/mail" className="ws-list-item"><div><strong>Review before sending</strong><p>{drafts} unsent drafts. {attempts} attempts today, UTC.</p></div><span aria-hidden="true">→</span></Link>
+        <Link href="/dashboard/content" className="ws-list-item"><div><strong>Check your availability</strong><p>{content.availability.available ? content.availability.label : "Not accepting projects"}</p></div><span aria-hidden="true">→</span></Link>
+      </div></section>
     </div>
-  );
+    <section className="ws-card"><div className="ws-section-heading"><h2>Drafts waiting for review</h2><Link href="/dashboard/mail">Open drafts</Link></div>{pending.length ? <ul className="ws-list">{pending.map(row => <li key={row.id}><Link className="ws-list-item" href={`/dashboard/mail/draft/${row.id}`}><div><strong>{row.subject}</strong><p>{row.recipient}</p></div><span className="ws-badge">{row.status}</span></Link></li>)}</ul> : <p className="ws-muted">No drafts waiting. Start a message from a prospect record when you have a reason to reach out.</p>}</section>
+    <section className="ws-card ws-list-item"><div><h2>Your public website</h2><p>{content.projects.length} projects. Content version {version}. Updated {updatedAt.slice(0,10)}.</p></div><Link className="ws-button" href="/dashboard/projects">Manage projects</Link></section>
+  </div>;
 }
