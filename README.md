@@ -1,6 +1,12 @@
 # gwhyyy.com
 
-Portfolio and project-intake site for [Mohamed Anas Fikhi](https://github.com/anasfik), AI Product & Automation Engineer based in Casablanca, Morocco.
+Portfolio and project-intake site for [Mohamed Anas Fikhi](https://github.com/anasfik), an independent software engineer and product builder based in Casablanca, working remotely.
+
+**AI-supercharged engineer who actually ships.**
+
+Quality work, built efficiently and shipped fast.
+
+[Live portfolio](https://gwhyyy.com) · [Work and case studies](https://gwhyyy.com/work) · [Services](https://gwhyyy.com/services) · [Reach out](https://gwhyyy.com/contact)
 
 ## Stack
 
@@ -13,16 +19,20 @@ Portfolio and project-intake site for [Mohamed Anas Fikhi](https://github.com/an
 
 `config/site.ts` is the typed source of truth for identity, projects, experience, capabilities, metrics, links, FAQ, resume, SEO, and machine-readable profiles.
 
-Public routes include:
+The live portfolio includes:
 
 - `/`
-- `/projects`
-- `/projects/[slug]`
-- `/hire`
+- `/work` and `/work/[slug]`
+- `/services` and `/services/[slug]`
+- `/about`
+- `/contact`
 - `/resume`
+- `/privacy`
 - `/llms.txt`
 - `/llms.md`
 - `/profile.json`
+
+The case studies cover Reqistry, FlutterGuard, Dart OpenAI, Dart Nostr, and my contributions to Gathr and Rollee. Deployed site changes may precede their merge into this repository’s default branch.
 
 ## Development
 
